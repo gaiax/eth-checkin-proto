@@ -1,0 +1,25 @@
+.navbar {
+  border-bottom: 1px solid grey;
+}
+
+.body-container {
+  margin-top: 10px
+}
+
+main {
+  margin-top: 60px;
+}
+
+form {
+  width: 350px;
+  margin-bottom: 10px;
+}
+
+ul {
+  margin-bottom: 0px;
+}
+
+#completedTaskList .content {
+  color: grey;
+  text-decoration: line-through;
+}
