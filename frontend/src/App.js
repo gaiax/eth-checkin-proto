@@ -13,15 +13,29 @@ import { Button } from 'react-bootstrap'
 import { PLACE_LIST_ABI, PLACE_LIST_ADDRESS } from './config'
 import PlaceList from './PlaceList'
 import CheckinList from './CheckinList'
-import FilteredCheckinList from './FilteredCheckinList'
+import CheckinInfo from './CheckinInfo'
 import AddPlace from './AddPlace.js'
+import PlaceInfo from './PlaceInfo.js'
+// import Map from './Map.js'
+// import {
+//   withGoogleMap,
+//   GoogleMap,
+//   Marker,
+// } from "react-google-maps";
+
 const placeList = new web3.eth.Contract(PLACE_LIST_ABI, PLACE_LIST_ADDRESS)
+
 class App extends Component {
   componentWillMount() {
     this.loadBlockchainData()
   }
+  
   async loadBlockchainData() {   
     this.setState({ placeList })
+
+    //Metamaskのアドレスを取得
+    const accounts = await web3.eth.getAccounts()
+    this.setState({ account: accounts[0] })
     
     //登録した場所をブロックチェーンから読み込む
     const placeCount = await placeList.methods.placeCount().call()
@@ -38,43 +52,98 @@ class App extends Component {
     for (var k = 1; k <= userCount; k++) {
       const checkin = await placeList.methods.checkins(k).call()
       checkin.checkintime  = new Date(checkin.checkintime * 1000)
-      
       this.setState({
         checkins: [...this.state.checkins, checkin]
       })
     }
+    this.state.checkins.sort(function(a,b){return b.checkintime - a.checkintime;})
+
+    //ユーザー用のチェックインデータ
+    const checkinForUser = this.state.checkins.filter(item => 
+      item.user === this.state.account
+    );
+    //上位３０件に絞る
+    const limit = checkinForUser.slice(0,30);
+    this.setState({
+      checkinsForUser: limit
+    })
+    
+    //場所を登録した人への場所の情報
+    const placeforowner = this.state.places.filter(item => 
+      item.owner === this.state.account
+    );
+    this.setState({
+      placeinfo: placeforowner
+    })    
+    //場所管理者用のチェックインデータ
+    const checkinForOwner = this.state.checkins.filter(item => 
+      item.placeid === this.state.placeinfo[0].id
+    );
+    this.setState({
+      checkinsForOwner: checkinForOwner
+    })
+    //24時以内のチェックインユーザーの表示
+    const now = new Date();
+    const newDate = new Date(now);
+    newDate.setDate(newDate.getDate() - 1)
+    console.log(now)
+    console.log(newDate)
+    console.log(this.state.checkinsForOwner.checkintime)
+    const checkinForOwnerLimitedBy24hours = this.state.checkinsForOwner.filter(item => 
+      item.checkintime > newDate
+    );
+    this.setState({
+      checkinsForOwner: checkinForOwnerLimitedBy24hours
+    })
+
     // 位置情報を獲得する
     await navigator.geolocation.getCurrentPosition(
       position => this.setState({ 
         latitude: position.coords.latitude, 
         longitude: position.coords.longitude,
-      }), 
-      err => console.log(err)
+      }, 
+      () => {
+        //自分に近いものだけ表示
+        const nearplace = this.state.places.filter(item => 
+          Number(item.latitude) > this.state.latitude - 0.001
+          && Number(item.latitude) < this.state.latitude + 0.001
+        );
+        this.setState({
+          nearplaces: nearplace
+        })
+      })
     );
-    this.state.checkins.sort(function(a,b){return b.checkintime - a.checkintime;})
+
+    this.state.checkinsForOwner.sort(function(a,b){return b.checkintime - a.checkintime;})
     this.setState({ loading: false })
     this.setState({ filtering: false })
   }
+  
   constructor(props) {
     super(props)
     this.state = {
       account: '',
       placeCount: 0,
+      hoges: [],
       places: [],
+      placeinfo: [],
+      nearplaces: [],
       placeid: '',
       userCount: 0,
       checkins: [],
-      filtering: true,
-      filteredCheckins: [],
+      checkinsForUser: [],
+      checkinsForOwner: [],
+      // filtering: true,
       latitude: null,
       longitude: null,
       loading: true,
     }
     this.createPlace = this.createPlace.bind(this)
     this.userCheckIn = this.userCheckIn.bind(this)
-    this.handleFilterVal = this.handleFilterVal.bind(this)
+    // this.handleFilterVal = this.handleFilterVal.bind(this)
     this.position = this.position.bind(this)
   }
+  
   // 場所を作成する関数
   createPlace = async (name) => {
     const accounts = await web3.eth.getAccounts()
@@ -113,21 +182,21 @@ class App extends Component {
       this.setState({ loading: false })
     })
   }
+
   // placeidでフィルターをかける関数
-  handleFilterVal(val) {
-    const now = new Date()
-    const within24hour = new Date(now)
-    within24hour.setDate(within24hour.getDate() - 1);
-    const line = this.state.checkins.filter((item) => (
-       item.placeid.indexOf( val ) >= 0
-       && item.checkintime > within24hour  
-    ));
-    this.setState({
-      filteredCheckins: line,
-      filtering: true
-    });
-    
-  }
+  // handleFilterVal(val) {
+  //   const now = new Date()
+  //   const within24hour = new Date(now)
+  //   within24hour.setDate(within24hour.getDate() - 1);
+  //   const line = this.state.checkins.filter((item) => (
+  //      item.placeid.indexOf( val ) >= 0
+  //      && item.checkintime > within24hour  
+  //   ));
+  //   this.setState({
+  //     filteredCheckins: line,
+  //     filtering: true
+  //   });
+  // }
   
   // 位置情報を確認する関数（たまにGeoglapic APIが作動しなくなるため）
   position = async () => {
@@ -159,10 +228,10 @@ class App extends Component {
             <Col sm={2}>
               <Nav variant="pills" className="flex-column">
                 <Nav.Item>
-                  <Nav.Link eventKey="first">ユーザー画面</Nav.Link>
+                  <Nav.Link eventKey="first">チェックイン</Nav.Link>
                 </Nav.Item>
                 <Nav.Item>
-                  <Nav.Link eventKey="second">管理者画面</Nav.Link>
+                  <Nav.Link eventKey="second">場所の管理</Nav.Link>
                 </Nav.Item>
                 <Nav.Item>
                   <Nav.Link eventKey="third">Tab 3</Nav.Link>
@@ -175,22 +244,14 @@ class App extends Component {
                   <Row>
                     <Col sm={6}>
                       <PlaceList
-                        places={this.state.places}
+                        places={this.state.nearplaces}
                         userCheckIn={this.userCheckIn}
-                        handleRefrsh={this.handleRefrsh} 
                       />
                     </Col>
                     <Col sm={6}>
-                      { this.state.filtering
-                        ?<FilteredCheckinList 
-                          filteredCheckins={this.state.filteredCheckins}
-                          handleFilterVal={this.handleFilterVal}
-                        />
-                        :<CheckinList 
-                          checkins={this.state.checkins}
-                          handleFilterVal={this.handleFilterVal}
-                        />
-                      }
+                      <CheckinList 
+                        checkinsForUser={this.state.checkinsForUser}
+                      />
                     </Col>
                   </Row>    
                 </Tab.Pane>
@@ -201,29 +262,20 @@ class App extends Component {
                         createPlace={this.createPlace}
                         position={this.position}
                       />
-                      <PlaceList
-                        places={this.state.places}
-                        userCheckIn={this.userCheckIn}
-                        handleRefrsh={this.handleRefrsh} 
+                      <PlaceInfo
+                        placeinfo={this.state.placeinfo}
                       />
                     </Col>
                     <Col sm={6} >
-                      {
-                        this.state.filtering
-                        ?<FilteredCheckinList 
-                          filteredCheckins={this.state.filteredCheckins}
-                          handleFilterVal={this.handleFilterVal}
-                          />
-                        :<CheckinList 
-                          checkins={this.state.checkins}
-                          handleFilterVal={this.handleFilterVal}
-                          />
-                      }
+                      <CheckinInfo 
+                        checkinsForOwner={this.state.checkinsForOwner}
+                        handleFilterVal={this.handleFilterVal}
+                      />
                     </Col>
                   </Row>
                 </Tab.Pane>
                 <Tab.Pane eventKey="third">
-                  
+                  {/* <Map /> */}
                 </Tab.Pane>
               </Tab.Content>
             </Col>

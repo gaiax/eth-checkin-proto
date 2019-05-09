@@ -5,7 +5,7 @@ import Row from 'react-bootstrap/Row'
 import Col from 'react-bootstrap/Col'
 
 class CheckinList extends Component {
-
+  
     constructor(props) {
       super(props)
       this.state = {
@@ -26,12 +26,13 @@ class CheckinList extends Component {
         <Container>
           <Row>
             <Col sm={7}>
-              <h2>Checkin List</h2>
+              <h2>Check-in List</h2>
             </Col>
             <Col sm={{ span: 3, offset: 1 }}>
               <input
                 type="text"
                 defaultValue=""
+                placeholder="これいらないね"
                 onKeyUp={this._filterVal}
               />
               <Button 
@@ -43,10 +44,10 @@ class CheckinList extends Component {
           </Row>  
           <Row>
             <Col sm={12}>
-              { this.props.checkins.map((checkin, key) => {
+              { this.props.checkinsForUser.map((checkin, key) => {
                 return(
                   <div key={key}>
-                    <p className="content">アドレス：{checkin.placeid}</p>
+                    <p className="content">場所：{checkin.placeid}</p>
                     <p className="content">時間：{checkin.checkintime.toLocaleString()}</p>
                   </div>
                 )

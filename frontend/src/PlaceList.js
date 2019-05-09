@@ -6,7 +6,7 @@ import Col from 'react-bootstrap/Col'
 import ListGroup from 'react-bootstrap/ListGroup'
 
 class PlaceList extends Component {
-
+  
   constructor(props) {
     super(props)
     this.state = {
@@ -26,7 +26,7 @@ class PlaceList extends Component {
               variant="outline-primary"
               onClick={(event) => {
                 this.props.userCheckIn(this.state.placeid) }} >
-              Checkin
+              Check-in
             </Button>
           </Col>
         </Row>

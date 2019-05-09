@@ -4,7 +4,7 @@ import Container from 'react-bootstrap/Container'
 import Row from 'react-bootstrap/Row'
 import Col from 'react-bootstrap/Col'
 
-class FilteredCheckinList extends Component {
+class CheckinInfo extends Component {
 
     constructor(props) {
       super(props)
@@ -26,7 +26,7 @@ class FilteredCheckinList extends Component {
         <Container>
           <Row>
             <Col sm={7}>
-              <h2>Checkin List</h2>
+              <h2>Check-in List</h2>
             </Col>
             <Col sm={{ span: 3, offset: 1 }}>
               <input
@@ -43,10 +43,10 @@ class FilteredCheckinList extends Component {
           </Row>  
           <Row>
             <Col sm={12}>
-              { this.props.filteredCheckins.map((checkin, key) => {
+              { this.props.checkinsForOwner.map((checkin, key) => {
                 return(
                   <div key={key}>
-                    <p className="content">アドレス：{checkin.placeid}</p>
+                    <p className="content">アドレス：{checkin.user}</p>
                     <p className="content">時間：{checkin.checkintime.toLocaleString()}</p>
                   </div>
                 )
@@ -58,5 +58,5 @@ class FilteredCheckinList extends Component {
     }
   }
   
-  export default FilteredCheckinList;
+  export default CheckinInfo;
   
