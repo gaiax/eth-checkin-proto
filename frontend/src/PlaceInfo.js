@@ -26,9 +26,10 @@ class PlaceInfo extends Component {
               return(
                 <div className={["placeTemplate", "checkbox"]} key={key}>
                   <p className="content">名前：{place.name}</p>
-                  <p className="content">{place.owner}</p>
+                  <p className="content">オーナーアドレス{place.owner}</p>
                   <p className="content">緯度 : {place.latitude}</p>
                   <p className="content">経度 : {place.longitude}</p>
+                  <img src= {`https://ipfs.io/ipfs/${place.ipfsHash}`} alt=""></img>
                 </div>  
               )  
             })}

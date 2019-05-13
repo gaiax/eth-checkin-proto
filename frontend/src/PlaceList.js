@@ -21,7 +21,7 @@ class PlaceList extends Component {
           <Col sm={6} >      
             <h2>場所一覧</h2>
           </Col>
-          <Col sm={{ span: 3, offset: 3 }} >
+          <Col sm={{ span: 5, offset: 1 }} >
             <Button
               variant="outline-primary"
               onClick={(event) => {
@@ -44,7 +44,9 @@ class PlaceList extends Component {
                         onClick={(event) => {
                           this.setState({ placeid: place.id })}}
                       />
-                      <span className="content">{place.name}</span>
+                      <span> </span>
+                      <img id="placeImage" src= {`https://ipfs.io/ipfs/${place.ipfsHash}`} alt=""></img>
+                      <span className="content"> {place.name}</span>
                     </ListGroup.Item>
                   </div>  
                 )

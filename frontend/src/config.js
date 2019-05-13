@@ -1,4 +1,4 @@
-export const PLACE_LIST_ADDRESS = '0x55b72e26d43fb356f176ba4ca1c92a870b024bc5'
+export const PLACE_LIST_ADDRESS = '0x2f55252c4f66e455845f3cde675fb56deb9043db'
 
 export const PLACE_LIST_ABI = [
   {
@@ -87,8 +87,8 @@ export const PLACE_LIST_ABI = [
         "type": "string"
       },
       {
-        "name": "completed",
-        "type": "bool"
+        "name": "ipfsHash",
+        "type": "string"
       },
       {
         "name": "latitude",
@@ -104,16 +104,98 @@ export const PLACE_LIST_ABI = [
     "type": "function"
   },
   {
+    "constant": true,
+    "inputs": [],
+    "name": "admin",
+    "outputs": [
+      {
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "payable": false,
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
     "inputs": [],
     "payable": false,
     "stateMutability": "nonpayable",
     "type": "constructor"
   },
   {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
+        "name": "_id",
+        "type": "uint256"
+      },
+      {
+        "indexed": true,
+        "name": "_owner",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "name": "_name",
+        "type": "string"
+      },
+      {
+        "indexed": false,
+        "name": "_latitude",
+        "type": "string"
+      },
+      {
+        "indexed": false,
+        "name": "_longitude",
+        "type": "string"
+      }
+    ],
+    "name": "CreatePlace",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
+        "name": "_placeid",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "name": "_user",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "name": "_checkintime",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "name": "_latitude",
+        "type": "string"
+      },
+      {
+        "indexed": false,
+        "name": "_longitude",
+        "type": "string"
+      }
+    ],
+    "name": "UserCheckIn",
+    "type": "event"
+  },
+  {
     "constant": false,
     "inputs": [
       {
         "name": "_name",
+        "type": "string"
+      },
+      {
+        "name": "_ipfsHash",
         "type": "string"
       },
       {
@@ -126,20 +208,6 @@ export const PLACE_LIST_ABI = [
       }
     ],
     "name": "createPlace",
-    "outputs": [],
-    "payable": false,
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "constant": false,
-    "inputs": [
-      {
-        "name": "_id",
-        "type": "uint256"
-      }
-    ],
-    "name": "toggleCompleted",
     "outputs": [],
     "payable": false,
     "stateMutability": "nonpayable",

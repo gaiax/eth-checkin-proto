@@ -13,6 +13,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "ipfs-api": "^26.1.2",
     "truffle": "^4.1.14"
   }
 }

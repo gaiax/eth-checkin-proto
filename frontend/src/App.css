@@ -19,6 +19,15 @@ ul {
   margin-bottom: 0px;
 }
 
+img {
+  width: 100%;
+}
+
+#placeImage {
+  width: 55px;
+  height: 55px;
+}
+
 #completedTaskList .content {
   color: grey;
   text-decoration: line-through;
