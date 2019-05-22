@@ -19,6 +19,7 @@ class Admin extends Component {
                     <p className="content">名前：{place.name}</p>
                     <p className="content">緯度：{place.latitude}</p>
                     <p className="content">経度：{place.longitude}</p>
+                    <p>{place.ipfsHash}</p>
                     <img src= {`https://ipfs.io/ipfs/${place.ipfsHash}`} alt=""></img>
                   </div>
                 )
@@ -28,7 +29,7 @@ class Admin extends Component {
               <h2>Check-in List</h2>
               { this.props.checkins.map((checkin, key) => {
                 return(
-                  <div key={key}>
+                  <div className="checkinList" key={key}>
                     <p className="content">場所：{this.props.places[Number(checkin.placeid) -1].name}</p>
                     <p className="content">ユーザー:{checkin.user}}</p>
                     <p className="content">時間：{checkin.checkintime.toLocaleString()}</p>

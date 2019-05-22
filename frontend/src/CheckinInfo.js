@@ -24,7 +24,7 @@ class CheckinInfo extends Component {
             <Col sm={12}>
               { this.props.checkinsForOwner.map((checkin, key) => {
                 return(
-                  <div key={key}>
+                  <div className="checkinList" key={key}>
                     <p className="content">アドレス：{checkin.user}</p>
                     <p className="content">時間：{checkin.checkintime.toLocaleString()}</p>
                   </div>

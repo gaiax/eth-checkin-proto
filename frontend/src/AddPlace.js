@@ -3,6 +3,7 @@ import Container from 'react-bootstrap/Container'
 import Row from 'react-bootstrap/Row'
 import Col from 'react-bootstrap/Col'
 import { Button } from 'react-bootstrap'
+import Form from 'react-bootstrap/Form'
 
 class AddPlace extends Component {
 
@@ -33,7 +34,7 @@ class AddPlace extends Component {
 
     render(){
         return(
-            <Container>
+            <Container className="AddPlace">
                 <Row>
                     <Col sm={6} >
                         <h2>場所登録</h2>
@@ -47,28 +48,47 @@ class AddPlace extends Component {
                     </Col>
                 </Row>
                 <Row>
-                    <form onSubmit={(event) => {
+                    <Form 
+                        onSubmit={(event) => {
                         event.preventDefault()
                         this.props.createPlace(this.place.value, this.state.buffer)
                     }}>
-                        <input
-                            id="newPlace"
-                            type="text"
-                            ref={(input) => {
-                                this.place = input
-                            }}
-                            className="form-control"
-                            placeholder="Add place..."
-                            autoFocus={true}
-                            required />
-                        <input 
-                            id="image"
-                            type="file"  
-                            className="form-control"
-                            onChange={this.captureFile}
-                             />
-                        <input type="submit" value="登録" />
-                    </form>
+                        <Form.Group as={Row}>
+                            <Form.Label column sm={2}>
+                            名前
+                            </Form.Label>
+                            <Col sm={10}>
+                                <Form.Control 
+                                    id="newPlace"
+                                    type="text"
+                                    ref={(input) => {
+                                        this.place = input
+                                    }}
+                                    className="form-control"
+                                    placeholder="Add place..."
+                                    autoFocus={true}
+                                    required /> 
+                            </Col>
+                        </Form.Group>
+                        <Form.Group as={Row}>
+                            <Form.Label column sm={2}>
+                            イメージ画像
+                            </Form.Label>
+                            <Col sm={10}>
+                                <Form.Control 
+                                    id="image"
+                                    type="file"  
+                                    className="form-control"
+                                    onChange={this.captureFile}
+                                    required /> 
+                            </Col>
+                        </Form.Group>
+                        <Form.Group as={Row}>
+                            <Col sm={{ span: 3, offset: 9 }}>
+                                <Button type="submit">登録</Button>
+                            </Col>
+                        </Form.Group>
+                    </Form>
                 </Row>
             </Container>
         )

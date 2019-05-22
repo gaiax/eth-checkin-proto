@@ -47,11 +47,25 @@ class PlaceList extends Component {
                       <span> </span>
                       <img id="placeImage" src= {`https://ipfs.io/ipfs/${place.ipfsHash}`} alt=""></img>
                       <span className="content"> {place.name}</span>
+                      <p></p>
                     </ListGroup.Item>
                   </div>  
                 )
               })}
             </ListGroup>  
+          </Col>
+        </Row>
+        <Row>
+          <Col sm={12}>
+          <h2>訪問者</h2>
+            { this.props.checkinList.map((checkin, key) => {
+              return(
+                <div className="checkinList" key={key}>
+                  <p className="content">アドレス：{checkin.user}</p>
+                  <p className="content">時間：{checkin.checkintime.toLocaleString()}</p>
+                </div>
+              )
+            })}
           </Col>
         </Row>
       </Container>
