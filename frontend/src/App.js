@@ -18,6 +18,8 @@ import CheckinInfo from './CheckinInfo'
 import AddPlace from './AddPlace.js'
 import PlaceInfo from './PlaceInfo.js'
 import Admin from './Admin.js'
+import CreateUser from './CreateUser.js'
+import VisiterList from './VisiterList.js'
 
 const placeList = new web3.eth.Contract(PLACE_LIST_ABI, PLACE_LIST_ADDRESS)
 
@@ -34,7 +36,11 @@ class App extends Component {
     const admin = await placeList.methods.getAdmin(this.state.account).call()
     this.setState({ admin })
     await this.loadPlaceInfo();
+    await console.log('Place information loaded')
     await this.loadCheckinInfo();
+    await console.log('Checkin information loaded')
+    await this.loadUserInfo();
+    await console.log('User information loaded')
   }
 
   async loadPlaceInfo() {
@@ -43,8 +49,10 @@ class App extends Component {
     this.setState({ placeCount })
     for (var i = 0; i < placeCount; i++) {
       const place = await placeList.methods.places(i).call()
+      const numberOfVisiter = await placeList.methods.getNumberOfVisiters(place.id).call()
+      const newplace = Object.assign(place, numberOfVisiter);
       this.setState({
-        places: [...this.state.places, place]
+        places: [...this.state.places, newplace]
       })
     }
     // 位置情報を獲得する
@@ -53,17 +61,17 @@ class App extends Component {
         latitude: position.coords.latitude, 
         longitude: position.coords.longitude,
       }, 
-      () => {
+      async () => {
         //自分に近いものだけ表示
-        const nearplace = this.state.places.filter(item => 
-          Number(item.latitude) > this.state.latitude - 0.01
-          && Number(item.latitude) < this.state.latitude + 0.01
+        const nearplace = await this.state.places.filter(item => 
+          Number(item.latitude) > this.state.latitude - 1.01
+          && Number(item.latitude) < this.state.latitude + 1.01
         );
         this.setState({
           nearplaces: nearplace
         })
-        console.log(this.state.latitude)
-        console.log(this.state.longitude)
+        await console.log(this.state.latitude)
+        await console.log(this.state.longitude)
       })
     );
 
@@ -80,44 +88,52 @@ class App extends Component {
     //Checkinしたユーザーの情報をブロックチェーンから読み込む
     const userCount = await placeList.methods.getNumberOfCheckin().call()
     this.setState({ userCount })
+    const now = new Date();
+    const limitTime = new Date(now);
+    limitTime.setHours(limitTime.getHours() - 12)
+    this.setState({ now, limitTime })
     
     //ユーザー用のチェックインリスト
     for (var l = 0; l < userCount; l++) {
       const checkin = await placeList.methods.getCheckinListForUser(l, this.state.account).call()
-      checkin.checkintime  = new Date(checkin.checkintime * 1000)
-      if (checkin[0] !== "0") {this.setState({
-        checkinListForUser: [...this.state.checkinListForUser, checkin]
-      })}
+      if (checkin[0] !== "0") {
+        checkin.checkintime  = new Date(checkin.checkintime * 1000)
+        this.setState({
+          checkinListForUser: [...this.state.checkinListForUser, checkin]
+        })
+      }
     }
     await this.state.checkinListForUser.sort(function(a,b){return b.checkintime - a.checkintime;})
+
     //上位３０件に絞る
     const limit = await this.state.checkinListForUser.slice(0,30);
     this.setState({
       checkinListForUser: limit
     })
-
-    console.log(this.state.checkinListForUser.length)
-    //check-inした際のその場所にcheck-inしている人のリスト
+    
+    //check-inしている人のリスト
     if (this.state.checkinListForUser.length > 0) {
       const now = new Date();
-      const newDate = new Date(now);
-      newDate.setHours(newDate.getHours() - 12)
-      if (this.state.checkinListForUser[0].checkintime > newDate) {
+      const limitTime = new Date(now);
+      limitTime.setHours(limitTime.getHours() - 12)
+      if (this.state.checkinListForUser[0].checkintime > limitTime) {
         for (var n = 0; n < userCount; n++) {
           const checkin = await placeList.methods.getCheckinListForOwner(n, this.state.checkinListForUser[0].placeid).call()
-          checkin.checkintime  = new Date(checkin.checkintime * 1000)
-          if (checkin[0] !== "0") {this.setState({
-            checkinList: [...this.state.checkinList, checkin]
-          })}
+          if (checkin[0] !== "0") {
+            const checkinTime = new Date(checkin.checkintime * 1000)
+            const limitTime = new Date();
+            limitTime.setHours(limitTime.getHours() - 12)
+            if (checkinTime > limitTime) {
+              checkin.checkintime  = new Date(checkin.checkintime * 1000)
+              const userInfo = await placeList.methods.users(checkin.user).call()
+              const newCheckin = Object.assign(checkin, userInfo);
+              this.setState({
+                visiterList: [...this.state.visiterList, newCheckin]
+              }
+            )}
+          }  
         }
-        newDate.setHours(newDate.getHours() - 12)
-        const checkinlist = this.state.checkinList.filter(item =>
-          item.checkintime > newDate
-        );
-        this.setState({
-          checkinList: checkinlist
-        })
-        await this.state.checkinList.sort(function(a,b){return b.checkintime - a.checkintime;})
+        await this.state.visiterList.sort(function(a,b){return b.checkintime - a.checkintime;})
       }
     }
 
@@ -125,10 +141,14 @@ class App extends Component {
     if (this.state.placeinfo.length > 0) {
       for (var o = 0; o < userCount; o++) {
         const checkin = await placeList.methods.getCheckinListForOwner(o, this.state.placeinfo[0].id).call()
-        checkin.checkintime  = new Date(checkin.checkintime * 1000)
-        if (checkin[0] !== "0") {this.setState({
-          checkinListForOwner: [...this.state.checkinListForOwner, checkin]
-        })}
+        if (checkin[0] !== "0") {
+          checkin.checkintime  = new Date(checkin.checkintime * 1000)
+          const userInfo = await placeList.methods.users(checkin.user).call()
+          const newCheckin = Object.assign(checkin, userInfo);
+          this.setState({
+            checkinListForOwner: [...this.state.checkinListForOwner, newCheckin]
+          }
+        )}
       }
       await this.state.checkinListForOwner.sort(function(a,b){return b.checkintime - a.checkintime;})
     }
@@ -149,15 +169,20 @@ class App extends Component {
         const checkin = await placeList.methods.getAllCheckinList(m, this.state.account).call()
         checkin.checkintime  = new Date(checkin.checkintime * 1000)
         if (checkin[0] !== "0") {this.setState({
-          checkins: [...this.state.checkins, checkin]
+          allCheckinList: [...this.state.allCheckinList, checkin]
         })}
       }
-      await this.state.checkins.sort(function(a,b){return b.checkintime - a.checkintime;})
+      await this.state.allCheckinList.sort(function(a,b){return b.checkintime - a.checkintime;})
     }
     
     this.setState({ loading: false })
   }
   
+  async loadUserInfo() {
+    const userInfo = await placeList.methods.users(this.state.account).call()
+    this.setState({ userInfo })
+  }
+
   async listenCheckinEvents() {
     const checkinEvent = await placeList.events.CheckIn({}, {
       fromBlock: 0,
@@ -186,16 +211,21 @@ class App extends Component {
       nearplaces: [],
       placeinfo: [],
       userCount: 0,
-      checkins: [],
+      allCheckinList: [],
       checkinListForUser: [],
       checkinListForOwner: [],
-      checkinList: [],
+      visiterList: [],
+      userInfo: [],
+      numberOfVisiter: [],
+      now: '',
+      limitTime: '',
       latitude: null,
       longitude: null,
       loading: true,
     }
     this.createPlace = this.createPlace.bind(this)
     this.userCheckIn = this.userCheckIn.bind(this)
+    this.createUser = this.createUser.bind(this)
     this.position = this.position.bind(this)
   }
   
@@ -209,9 +239,8 @@ class App extends Component {
     this.setState({ account: accounts[0] })
     const latitude = String(this.state.latitude);
     const longitude = String(this.state.longitude);
-    ipfs.files.add(ipfsHash, async (error, result) => {
-      if(error) {
-        console.error(error)
+    await ipfs.files.add(ipfsHash, async (error, result) => {
+      if(error) { console.error(error)
         return
       }
       this.state.placeList.methods.createPlace(name, result[0].hash, latitude, longitude).send({ from: this.state.account })
@@ -225,14 +254,30 @@ class App extends Component {
     this.setState({ loading: true })
     const accounts = await web3.eth.getAccounts()
     this.setState({ account: accounts[0] })
-    this.setState({ checkins: [] })
-    this.setState({ checkinsForUser: [] })
+    this.setState({ allCheckinList: [] })
+    this.setState({ checkinListForUser: [] })
+    this.setState({ visiterList: [] })
     const latitude = String(this.state.latitude);
     const longitude = String(this.state.longitude);
     await this.state.placeList.methods.userCheckIn(placeId, latitude, longitude).send({ from: this.state.account })
     .once('receipt', (receipt) => {  })
     await this.listenCheckinEvents() //イベント
     await this.loadCheckinInfo() //リロード
+    return this.setState({ loading: false })
+  }
+
+  createUser = async (userName, ipfsHash) => {
+    console.log('on Submit ...')
+    this.setState({ loading: true })
+    const accounts = await web3.eth.getAccounts()
+    this.setState({ account: accounts[0] })
+    await ipfs.files.add(ipfsHash, async (error, result) => {
+      if(error) { console.error(error)
+        return
+      }
+      await this.state.placeList.methods.createUser(userName, result[0].hash).send({ from: this.state.account })    
+    }) 
+    .once('receipt', (receipt) => {  })
     return this.setState({ loading: false })
   }
 
@@ -272,9 +317,15 @@ class App extends Component {
                 <Nav.Item>
                   <Nav.Link eventKey="second">場所の管理</Nav.Link>
                 </Nav.Item>
+                <Nav.Item>
+                  <Nav.Link eventKey="third">場所の登録</Nav.Link>
+                </Nav.Item>
+                <Nav.Item>
+                  <Nav.Link eventKey="forth">ユーザー登録</Nav.Link>
+                </Nav.Item>
                 { this.state.account === this.state.admin ?
                   <Nav.Item>
-                    <Nav.Link eventKey="third">管理者用</Nav.Link>
+                    <Nav.Link eventKey="fifth">管理者用</Nav.Link>
                   </Nav.Item> 
                   : 
                   <></> 
@@ -291,7 +342,6 @@ class App extends Component {
                         <PlaceList
                           placeList={this.state.placeList}
                           places={this.state.nearplaces}
-                          checkinList={this.state.checkinList}
                           userCheckIn={this.userCheckIn}
                         />
                       </Col>
@@ -301,15 +351,27 @@ class App extends Component {
                           places={this.state.places}
                         />
                       </Col>
-                    </Row>    
+                    </Row>   
+                    <Row>
+                      <Col sm={12}>
+                        { this.state.checkinListForUser.length > 0 ? 
+                          <>
+                            { this.state.checkinListForUser[0].checkintime > this.state.limitTime ? 
+                              <VisiterList 
+                                visiterList={this.state.visiterList}
+                                checkinsForUser={this.state.checkinListForUser}
+                                places={this.state.places}
+                              /> : 
+                            <></>
+                            }
+                          </> : 
+                        <></> }
+                      </Col>
+                    </Row> 
                   </Tab.Pane>
                   <Tab.Pane eventKey="second">    
                     <Row>
                       <Col sm={6} >
-                        <AddPlace 
-                          createPlace={this.createPlace}
-                          position={this.position}
-                        />
                         <PlaceInfo
                           placeinfo={this.state.placeinfo}
                         />
@@ -321,7 +383,27 @@ class App extends Component {
                       </Col>
                     </Row>
                   </Tab.Pane>
-                  <Tab.Pane eventKey="third">
+                  <Tab.Pane eventKey="third">    
+                    <Row>
+                      <Col>
+                        <AddPlace 
+                          createPlace={this.createPlace}
+                          position={this.position}
+                        />
+                      </Col>
+                    </Row>
+                  </Tab.Pane>
+                  <Tab.Pane eventKey="forth">    
+                    <Row>
+                      <Col>
+                        <CreateUser 
+                          createUser={this.createUser}
+                          userInfo={this.state.userInfo}
+                        />
+                      </Col>
+                    </Row>
+                  </Tab.Pane>
+                  <Tab.Pane eventKey="fifth">
                     { this.state.account === this.state.admin ? (
                     <>
                       <Admin 

@@ -5,12 +5,26 @@ import Row from 'react-bootstrap/Row'
 import Col from 'react-bootstrap/Col'
 import ListGroup from 'react-bootstrap/ListGroup'
 
+import { PLACE_LIST_ABI, PLACE_LIST_ADDRESS } from './config'
+import web3 from './web3.js'
+const placeList = new web3.eth.Contract(PLACE_LIST_ABI, PLACE_LIST_ADDRESS)
+
+
 class PlaceList extends Component {
   
+  componentWillMount() {
+    this.loadBlockchainData()
+  }
+  
+  async loadBlockchainData() {   
+    this.setState({ placeList }) 
+  }
+
   constructor(props) {
     super(props)
     this.state = {
       placeid: '',
+      placeList: '',
     }
   }
 
@@ -42,30 +56,18 @@ class PlaceList extends Component {
                         name="radionutton"
                         id={place.id}
                         onClick={(event) => {
-                          this.setState({ placeid: place.id })}}
+                          this.setState({ placeid: place.id })
+                        }}
                       />
                       <span> </span>
                       <img id="placeImage" src= {`https://ipfs.io/ipfs/${place.ipfsHash}`} alt=""></img>
                       <span className="content"> {place.name}</span>
-                      <p></p>
+                      <span>  {place[0]}</span>
                     </ListGroup.Item>
                   </div>  
                 )
               })}
             </ListGroup>  
-          </Col>
-        </Row>
-        <Row>
-          <Col sm={12}>
-          <h2>訪問者</h2>
-            { this.props.checkinList.map((checkin, key) => {
-              return(
-                <div className="checkinList" key={key}>
-                  <p className="content">アドレス：{checkin.user}</p>
-                  <p className="content">時間：{checkin.checkintime.toLocaleString()}</p>
-                </div>
-              )
-            })}
           </Col>
         </Row>
       </Container>

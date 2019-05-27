@@ -10,7 +10,7 @@ class AddPlace extends Component {
     constructor(props) {
         super(props) 
         this.state= {
-          buffer: null,
+            buffer: null,
         }
         this.captureFile = this.captureFile.bind(this);
         //this.onSubmit = this.onSubmit.bind(this); 
@@ -47,49 +47,43 @@ class AddPlace extends Component {
                         </Button>
                     </Col>
                 </Row>
-                <Row>
-                    <Form 
-                        onSubmit={(event) => {
-                        event.preventDefault()
-                        this.props.createPlace(this.place.value, this.state.buffer)
-                    }}>
-                        <Form.Group as={Row}>
-                            <Form.Label column sm={2}>
-                            名前
-                            </Form.Label>
-                            <Col sm={10}>
-                                <Form.Control 
-                                    id="newPlace"
-                                    type="text"
-                                    ref={(input) => {
-                                        this.place = input
-                                    }}
-                                    className="form-control"
-                                    placeholder="Add place..."
-                                    autoFocus={true}
-                                    required /> 
-                            </Col>
-                        </Form.Group>
-                        <Form.Group as={Row}>
-                            <Form.Label column sm={2}>
-                            イメージ画像
-                            </Form.Label>
-                            <Col sm={10}>
-                                <Form.Control 
-                                    id="image"
-                                    type="file"  
-                                    className="form-control"
-                                    onChange={this.captureFile}
-                                    required /> 
-                            </Col>
-                        </Form.Group>
-                        <Form.Group as={Row}>
-                            <Col sm={{ span: 3, offset: 9 }}>
-                                <Button type="submit">登録</Button>
-                            </Col>
-                        </Form.Group>
-                    </Form>
-                </Row>
+                <Form 
+                    onSubmit={(event) => {
+                    event.preventDefault()
+                    this.props.createPlace(this.place.value, this.state.buffer)
+                }}>
+                    <Form.Group as={Row}>
+                        <Form.Label column sm={4}>名前</Form.Label>
+                        <Col sm={8}>
+                            <Form.Control 
+                                id="newPlace"
+                                type="text"
+                                ref={(input) => {
+                                    this.place = input
+                                }}
+                                className="form-control"
+                                placeholder="Add place..."
+                                autoFocus={true}
+                                required /> 
+                        </Col>
+                    </Form.Group>
+                    <Form.Group as={Row}>
+                        <Form.Label column sm={4}>イメージ画像</Form.Label>
+                        <Col sm={8}>
+                            <Form.Control 
+                                id="image"
+                                type="file"  
+                                className="form-control"
+                                onChange={this.captureFile}
+                                required /> 
+                        </Col>
+                    </Form.Group>
+                    <Form.Group as={Row}>
+                        <Col sm={{ span: 3, offset: 9 }}>
+                            <Button type="submit">登録</Button>
+                        </Col>
+                    </Form.Group>
+                </Form>
             </Container>
         )
     }

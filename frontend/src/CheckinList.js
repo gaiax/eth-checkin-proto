@@ -25,7 +25,7 @@ class CheckinList extends Component {
               { this.props.checkinsForUser.map((checkin, key) => {
                 return(
                   <div className="checkinList" key={key}>
-                    {/* <p className="content">場所：{this.props.places[Number(checkin.placeid)].name}</p> */}
+                    <p className="content">場所：{this.props.places[Number(checkin.placeid)-1].name}</p>
                     <p className="content">時間：{checkin.checkintime.toLocaleString()}</p>
                   </div>
                 )

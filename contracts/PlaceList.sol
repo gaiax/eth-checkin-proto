@@ -7,6 +7,12 @@ contract PlaceList {
   // ? publicで良いのか？ 
   address internal admin;
 
+  struct User {
+    string userName;
+    // mappingで組み込まれてるけどいるかな
+    string ipfsHash;
+  }
+
   struct Place {
     uint id;
     address owner;
@@ -29,44 +35,29 @@ contract PlaceList {
     string text;
   }
 
-  Hoge[] public hoges;
-
   //mapping(uint => Place) public places;
   //mapping(address => Checkin) public checkinListForUser;
   Place[] public places;
   Checkin[] internal checkins;
-  //mapping(address => uint) public checkinListForUser; 
+  mapping(address => User) public users;
 
-  event CreatePlace(
-    uint _id,
-    address indexed _owner, 
-    string _name, 
-    string _ipfsHash,
-    string _latitude, 
-    string _longitude 
-  );
-
-  event CheckIn(
-    uint _placeid,
-    address _user,
-    uint _checkintime,
-    string _latitude,
-    string _longitude
-  );
+  event CreatePlace (uint _id, address indexed _owner, string _name, string _ipfsHash, string _latitude, string _longitude);
+  event CheckIn( uint _placeid, address _user, uint _checkintime, string _latitude, string _longitude);
+  event CreateUser (string userName, string ipfsHash);
 
   constructor() public {
     admin = msg.sender;
-    places.push(Place(1, 0x6322eA177D669Ff5674412B49FcE7EB05E8D167E, "MyPlace", "QmTjzYr14n12YAB4bEMj2fEKcNL3G2TBtBKNxFCRe2Bxtg", "35.737950000000005", "139.7400068" ));
-    placeCount++;
-    hoges.push(Hoge(1, "Hogehoge"));
+    //places.push(Place(1, 0x6322eA177D669Ff5674412B49FcE7EB05E8D167E, "MyPlace", "QmTjzYr14n12YAB4bEMj2fEKcNL3G2TBtBKNxFCRe2Bxtg", "35.737950000000005", "139.7400068" ));
+    //placeCount++;
   }
 
-  function hogehoge() external view returns(Hoge memory) {
-    return hoges[0];
-  }
+  function createUser(string memory _userName, string memory _ipfsHash) public {
+    users[msg.sender] = User(_userName, _ipfsHash);
+    emit CreateUser(_userName, _ipfsHash);
+  } 
 
   function getAdmin(address _from) external view returns(address) {
-    //require(admin == _from);
+    require(admin == _from);
     return admin;
   }
 
@@ -92,7 +83,7 @@ contract PlaceList {
     return places.length;
   }
 
-    function getCheckinListForUser(uint _id, address _user) external view returns(Checkin memory) {
+  function getCheckinListForUser(uint _id, address _user) external view returns(Checkin memory) {
     if (checkins[_id].user == _user) {
       return checkins[_id]; 
     }

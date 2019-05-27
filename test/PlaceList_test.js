@@ -1,3 +1,4 @@
+
 var PlaceList = artifacts.require('./PlaceList.sol');
 
 contract('PlaceList', function(accounts) {
@@ -19,14 +20,33 @@ contract('PlaceList', function(accounts) {
   it('facilitates admin is secured', function() {
     return PlaceList.deployed().then(function(instance) {
       placeListInstance = instance;
+      return placeListInstance.getAdmin(user1)
       return placeListInstance.getAdmin(admin);
     }).then(function(address) {
       adminFromContract = address;
       assert.equal(adminFromContract, admin);
     });
   })
+  
+  it('facilitates create user function', function() {
+    return PlaceList.deployed().then(function(instance) {
+      placeListInstance = instance;
+      return placeListInstance.createUser("Sample1", {from: user1});
+    }).then(function(receipt) {
+      console.log(receipt)
+      assert.equal(receipt.logs.length, 1, 'triggers one event');
+      assert.equal(receipt.logs[0].event, 'CreateUser', 'should be the "CreateUser" event');
+      assert.equal(receipt.logs[0].args.userName, "Sample1", 'logs the user name');
+      assert.equal(receipt.logs[0].args.userAddress, user1, 'logs the user address');
+      return placeListInstance.users(user1)
+    }).then(function(result) {
+      user = result
+      assert.equal(user.userName, "Sample1" , 'Smample1 is the name of User1')
+      assert.equal(user.userAddress, user1, 'Address should be same as user1')
+    })
+  })
 
-  it('facilitates create place and check-in', function() {
+  it('facilitates create place function', function() {
     return PlaceList.deployed().then(function(instance) {
       placeListInstance = instance;
       return placeListInstance.placeCount()
@@ -43,6 +63,12 @@ contract('PlaceList', function(accounts) {
       assert.equal(receipt.logs[0].args._ipfsHash, "QmTjzYr14n12YAB4bEMj2fEKcNL3G2TBtBKNxFCRe2Bxtg", 'logs the ipfsHash')
       assert.equal(receipt.logs[0].args._latitude, "35.737950000000005", 'logs the latitude')
       assert.equal(receipt.logs[0].args._longitude, "139.7400068", 'logs the longitude')
+    })
+  })
+
+  it('facilitates check-in function', function() {
+    return PlaceList.deployed().then(function(instance) {
+      placeListInstance = instance;
       return placeListInstance.userCheckIn(1, "35.737950000000005", "139.7400068", {from: user1})
     }).then(function(receipt) {
       assert.equal(receipt.logs.length, placeCount - 1, 'triggers one event');
@@ -52,10 +78,6 @@ contract('PlaceList', function(accounts) {
       //assert.equal(receipt.logs[0].args._checkintime, now, 'logs the time when user checked-in');
       assert.equal(receipt.logs[0].args._latitude, "35.737950000000005", 'logs the latitude');
       assert.equal(receipt.logs[0].args._longitude, "139.7400068", 'logs the longitude');
-      return placeListInstance.getNumberOfVisiters(1)
-    }).then(function(number) {
-      numberOfVisiters = number
-      assert.equal(numberOfVisiters, 1, 'show the number of visiter for specific place');
       return placeListInstance.userCheckIn(1, "35.737950000000005", "139.7400068", {from: user2})
     }).then(function(receipt) {
       assert.equal(receipt.logs.length, placeCount - 1, 'triggers one event');
@@ -65,24 +87,50 @@ contract('PlaceList', function(accounts) {
       //assert.equal(receipt.logs[0].args._checkintime, now, 'logs the time when user checked-in');
       assert.equal(receipt.logs[0].args._latitude, "35.737950000000005", 'logs the latitude');
       assert.equal(receipt.logs[0].args._longitude, "139.7400068", 'logs the longitude');
-      return placeListInstance.getNumberOfVisiters(1)
-    }).then(function(number) {
-      numberOfVisiters = number
-      assert.equal(numberOfVisiters, 2, 'show the number of visiter for specific place');
-      return placeListInstance.getNumberOfCheckin()
-    }).then(function(number) {
-      numberOfCheckin = number;
-      assert.equal(numberOfCheckin, 2, 'show the number of check-in');
-      return placeListInstance.getNumberOfPlace()
-    }).then(function(number) {
-      numberOfPlace = number
-      assert.equal(numberOfPlace, 1, 'show the number of place');
+    })  
+  })
+
+  it('facilitates getCheckinListForUser function', function() {
+    return PlaceList.deployed().then(function(instance) {
+      placeListInstance = instance;
       return placeListInstance.getCheckinListForUser(0, user1);
     }).then(function(result) {
       checkinListForUser = result;
-      assert.equal(checkinListForUser[0]._placeid, 1), 'place id of filtered check-in list for user';
+      assert.equal(checkinListForUser.placeid, 1, 'show an place id of filtered check-in list for user');
+      assert.equal(checkinListForUser.user, user1, 'show an address of filtered check-in list for user');
     })
-  });
+  })
+
+  it('facilitates getCheckinListForOwner function', function() {
+    return PlaceList.deployed().then(function(instance) {
+      placeListInstance = instance;
+      return placeListInstance.getCheckinListForOwner(0, 1);
+    }).then(function(result) {
+      checkinListForOwner = result;
+      assert.equal(checkinListForOwner.user, user1, 'show a user address of filtered check-in list for owner');
+      return placeListInstance.getCheckinListForOwner(1, 1);
+    }).then(function(result) {
+      checkinListForOwner = result;
+      assert.equal(checkinListForOwner.user, user2, 'show a user address of filtered check-in list for owner');
+    })
+  })
+
+  it('facilitates getAllCheckinList function', function() {
+    return PlaceList.deployed().then(function(instance) {
+      placeListInstance = instance;
+      return placeListInstance.getAllCheckinList(0, placeOwner);
+    }).then(assert.fail).catch(function(error) {
+      assert(error.message.indexOf('revert') >= 0, 'cannot access to getAllCheckinList function');
+      return placeListInstance.getAllCheckinList(0, admin);
+    }).then(function(result) {
+      allCheckinList = result;
+      assert.equal(allCheckinList.user, user1);
+      return placeListInstance.getAllCheckinList(1, admin);
+    }).then(function(result) {
+      allCheckinList = result;
+      assert.equal(allCheckinList.user, user2);
+    })
+  })
 
   it('facilitates number of place and check-in', function() {
     return PlaceList.deployed().then(function(instance) {
@@ -103,4 +151,5 @@ contract('PlaceList', function(accounts) {
       assert.equal(hoges.id, 1);
     })
   })
+
 })
