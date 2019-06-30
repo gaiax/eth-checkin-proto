@@ -5,13 +5,6 @@ import Col from 'react-bootstrap/Col'
 
 class CheckinList extends Component {
   
-    constructor(props) {
-      super(props)
-      this.state = {
-        val: ''
-      }
-    }
-  
     render() {
       return (
         <Container>

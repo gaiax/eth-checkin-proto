@@ -9,7 +9,7 @@
     "react-dom": "^16.8.3",
     "react-google-maps": "^9.4.5",
     "react-scripts": "^2.1.8",
-    "web3": "^1.0.0-beta.46"
+    "web3": "^1.0.0-beta.37"
   },
   "scripts": {
     "start": "react-scripts start",

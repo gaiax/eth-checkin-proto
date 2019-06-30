@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import web3 from './web3.js'
 import ipfs from "./ipfs.js";
+import CheckinContract from './abis/Checkin.json'
 import './App.css'
 import 'bootstrap/dist/css/bootstrap.css'
 import Navbar from 'react-bootstrap/Navbar'
@@ -11,7 +12,6 @@ import Col from 'react-bootstrap/Col'
 import { Form } from 'react-bootstrap'
 import { FormControl } from 'react-bootstrap'
 import { Button } from 'react-bootstrap'
-import { PLACE_LIST_ABI, PLACE_LIST_ADDRESS } from './config'
 import PlaceList from './PlaceList'
 import CheckinList from './CheckinList'
 import CheckinInfo from './CheckinInfo'
@@ -21,7 +21,6 @@ import Admin from './Admin.js'
 import CreateUser from './CreateUser.js'
 import VisiterList from './VisiterList.js'
 
-const placeList = new web3.eth.Contract(PLACE_LIST_ABI, PLACE_LIST_ADDRESS)
 
 class App extends Component {
   componentWillMount() {
@@ -29,52 +28,75 @@ class App extends Component {
   }
   
   async loadBlockchainData() {   
-    this.setState({ placeList }) 
-    //Metamaskのアドレスを取得
-    const accounts = await web3.eth.getAccounts()
-    this.setState({ account: accounts[0] })
-    const admin = await placeList.methods.getAdmin(this.state.account).call()
-    this.setState({ admin })
+    try {
+      const networkId = await web3.eth.net.getId()
+      const placeList = new web3.eth.Contract(CheckinContract.abi, CheckinContract.networks[networkId].address)
+      this.setState({ placeList })  
+      const accounts = await web3.eth.getAccounts()
+      this.setState({ account: accounts[0] })
+      try{
+        const admin = await placeList.methods.getAdmin(this.state.account).call()
+        this.setState({ admin })
+      } catch(e){  
+        console.log(e)
+      } 
+    } catch (error) {
+      alert(
+        `Failed to load web3, accounts, or contract. Check console for details.`,
+      );
+      console.error(error);
+    }
     await this.loadPlaceInfo();
-    await console.log('Place information loaded')
+    await console.log('Place information loaded')  
     await this.loadCheckinInfo();
     await console.log('Checkin information loaded')
     await this.loadUserInfo();
-    await console.log('User information loaded')
+    await console.log('User information loaded')  
   }
 
   async loadPlaceInfo() {
     //登録した場所をブロックチェーンから読み込む
-    const placeCount = await placeList.methods.getNumberOfPlace().call()
+    const placeCount = await this.state.placeList.methods.getNumberOfPlace().call()
     this.setState({ placeCount })
     for (var i = 0; i < placeCount; i++) {
-      const place = await placeList.methods.places(i).call()
-      const numberOfVisiter = await placeList.methods.getNumberOfVisiters(place.id).call()
+      const place = await this.state.placeList.methods.places(i).call()
+      const numberOfVisiter = await this.state.placeList.methods.getNumberOfVisiters(place.id).call()
       const newplace = Object.assign(place, numberOfVisiter);
       this.setState({
         places: [...this.state.places, newplace]
       })
     }
-    // 位置情報を獲得する
-    await navigator.geolocation.getCurrentPosition(
-      position => this.setState({ 
-        latitude: position.coords.latitude, 
-        longitude: position.coords.longitude,
-      }, 
-      async () => {
-        //自分に近いものだけ表示
-        const nearplace = await this.state.places.filter(item => 
-          Number(item.latitude) > this.state.latitude - 1.01
-          && Number(item.latitude) < this.state.latitude + 1.01
-        );
-        this.setState({
-          nearplaces: nearplace
-        })
-        await console.log(this.state.latitude)
-        await console.log(this.state.longitude)
-      })
-    );
 
+    // 位置情報を獲得する
+    try {
+      await navigator.geolocation.getCurrentPosition(
+        position => this.setState({ 
+          latitude: position.coords.latitude, 
+          longitude: position.coords.longitude,
+        }, 
+        async () => {
+          //自分に近いものだけ表示
+          const nearplace = await this.state.places.filter(item => 
+            Number(item.latitude) > this.state.latitude - 1.01
+            && Number(item.latitude) < this.state.latitude + 1.01
+          );
+          this.setState({
+            nearplaces: nearplace
+          })
+          await console.log(this.state.latitude)
+          await console.log(this.state.longitude)
+        })
+      );
+    } catch (error) {
+      alert(
+        `位置情報が取得できませんでした`,
+      );   
+      console.error(error);
+      this.setState({
+        nearplaces: this.state.places
+      })
+    }
+    
     //場所のオーナー用の場所の情報
     const placeforowner = this.state.places.filter(item => 
       item.owner === this.state.account
@@ -86,16 +108,17 @@ class App extends Component {
 
   async loadCheckinInfo() {
     //Checkinしたユーザーの情報をブロックチェーンから読み込む
-    const userCount = await placeList.methods.getNumberOfCheckin().call()
+    const userCount = await this.state.placeList.methods.getNumberOfCheckin().call()
     this.setState({ userCount })
     const now = new Date();
-    const limitTime = new Date(now);
-    limitTime.setHours(limitTime.getHours() - 12)
-    this.setState({ now, limitTime })
+    const twelveHoursAgo = new Date(now);
+    twelveHoursAgo.setHours(twelveHoursAgo.getHours() - 12)
+    const twentyFourHoursAgo = new Date(now);
+    twentyFourHoursAgo.setHours(twentyFourHoursAgo.getHours() - 24)
     
     //ユーザー用のチェックインリスト
     for (var l = 0; l < userCount; l++) {
-      const checkin = await placeList.methods.getCheckinListForUser(l, this.state.account).call()
+      const checkin = await this.state.placeList.methods.getCheckinListForUser(l, this.state.account).call()
       if (checkin[0] !== "0") {
         checkin.checkintime  = new Date(checkin.checkintime * 1000)
         this.setState({
@@ -113,19 +136,16 @@ class App extends Component {
     
     //check-inしている人のリスト
     if (this.state.checkinListForUser.length > 0) {
-      const now = new Date();
-      const limitTime = new Date(now);
-      limitTime.setHours(limitTime.getHours() - 12)
-      if (this.state.checkinListForUser[0].checkintime > limitTime) {
+      if (this.state.checkinListForUser[0].checkintime > twelveHoursAgo) {
         for (var n = 0; n < userCount; n++) {
-          const checkin = await placeList.methods.getCheckinListForOwner(n, this.state.checkinListForUser[0].placeid).call()
+          const checkin = await this.state.placeList.methods.getCheckinListForOwner(n, this.state.checkinListForUser[0].placeid).call()
           if (checkin[0] !== "0") {
             const checkinTime = new Date(checkin.checkintime * 1000)
             const limitTime = new Date();
             limitTime.setHours(limitTime.getHours() - 12)
             if (checkinTime > limitTime) {
               checkin.checkintime  = new Date(checkin.checkintime * 1000)
-              const userInfo = await placeList.methods.users(checkin.user).call()
+              const userInfo = await this.state.placeList.methods.users(checkin.user).call()
               const newCheckin = Object.assign(checkin, userInfo);
               this.setState({
                 visiterList: [...this.state.visiterList, newCheckin]
@@ -140,10 +160,10 @@ class App extends Component {
     //場所のオーナー用のチェックインリスト
     if (this.state.placeinfo.length > 0) {
       for (var o = 0; o < userCount; o++) {
-        const checkin = await placeList.methods.getCheckinListForOwner(o, this.state.placeinfo[0].id).call()
+        const checkin = await this.state.placeList.methods.getCheckinListForOwner(o, this.state.placeinfo[0].id).call()
         if (checkin[0] !== "0") {
           checkin.checkintime  = new Date(checkin.checkintime * 1000)
-          const userInfo = await placeList.methods.users(checkin.user).call()
+          const userInfo = await this.state.placeList.methods.users(checkin.user).call()
           const newCheckin = Object.assign(checkin, userInfo);
           this.setState({
             checkinListForOwner: [...this.state.checkinListForOwner, newCheckin]
@@ -153,20 +173,17 @@ class App extends Component {
       await this.state.checkinListForOwner.sort(function(a,b){return b.checkintime - a.checkintime;})
     }
     //24時以内のチェックインユーザーの表示
-    // const now = new Date();
-    // const newDate = new Date(now);
-    // newDate.setDate(newDate.getDate() - 1)
-    // const checkinForOwnerLimitedBy24hours = this.state.checkinListForOwner.filter(item => 
-    //   item.checkintime > newDate
-    // );
-    // this.setState({
-    //   checkinListForOwner: checkinForOwnerLimitedBy24hours
-    // })
+    const checkinForOwnerLimitedBy24hours = this.state.checkinListForOwner.filter(item => 
+      item.checkintime > twentyFourHoursAgo
+    );
+    this.setState({
+      checkinListForOwner: checkinForOwnerLimitedBy24hours
+    })
 
     //管理者用のチェックインリスト
     if (this.state.account === this.state.admin) {
       for (var m = 0; m < userCount; m++) {
-        const checkin = await placeList.methods.getAllCheckinList(m, this.state.account).call()
+        const checkin = await this.state.placeList.methods.getAllCheckinList(m, this.state.account).call()
         checkin.checkintime  = new Date(checkin.checkintime * 1000)
         if (checkin[0] !== "0") {this.setState({
           allCheckinList: [...this.state.allCheckinList, checkin]
@@ -179,12 +196,12 @@ class App extends Component {
   }
   
   async loadUserInfo() {
-    const userInfo = await placeList.methods.users(this.state.account).call()
+    const userInfo = await this.state.placeList.methods.users(this.state.account).call()
     this.setState({ userInfo })
   }
 
   async listenCheckinEvents() {
-    const checkinEvent = await placeList.events.CheckIn({}, {
+    const checkinEvent = await this.state.placeList.events.CheckIn({}, {
       fromBlock: 0,
       toBlock: 'latest',
     })
@@ -194,7 +211,7 @@ class App extends Component {
   }
 
   async listenCreatePlaceEvents() {
-    const createPlaceEvent = await placeList.events.CreatePlace({}, {
+    const createPlaceEvent = await this.state.placeList.events.CreatePlace({}, {
       fromBlock: 0,
       toBlock: 'latest',
     })
@@ -235,8 +252,8 @@ class App extends Component {
     this.setState({ loading: true })
     this.setState({ places: [] })
     this.setState({ nearplaces: [] })
-    const accounts = await web3.eth.getAccounts()
-    this.setState({ account: accounts[0] })
+    // const accounts = await web3.eth.getAccounts()
+    // this.setState({ account: accounts[0] })
     const latitude = String(this.state.latitude);
     const longitude = String(this.state.longitude);
     await ipfs.files.add(ipfsHash, async (error, result) => {
@@ -252,8 +269,8 @@ class App extends Component {
   // Checkinする関数
   userCheckIn = async (placeId) => {
     this.setState({ loading: true })
-    const accounts = await web3.eth.getAccounts()
-    this.setState({ account: accounts[0] })
+    // const accounts = await web3.eth.getAccounts()
+    // this.setState({ account: accounts[0] })
     this.setState({ allCheckinList: [] })
     this.setState({ checkinListForUser: [] })
     this.setState({ visiterList: [] })
@@ -275,9 +292,8 @@ class App extends Component {
       if(error) { console.error(error)
         return
       }
-      await this.state.placeList.methods.createUser(userName, result[0].hash).send({ from: this.state.account })    
+      this.state.placeList.methods.createUser(userName, result[0].hash).send({ from: this.state.account })    
     }) 
-    .once('receipt', (receipt) => {  })
     return this.setState({ loading: false })
   }
 
@@ -408,7 +424,7 @@ class App extends Component {
                     <>
                       <Admin 
                         places = {this.state.places}
-                        checkins = {this.state.checkins}
+                        checkins = {this.state.allCheckinList}
                       />
                     </>) : (
                     <>

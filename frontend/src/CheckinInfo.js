@@ -4,13 +4,6 @@ import Row from 'react-bootstrap/Row'
 import Col from 'react-bootstrap/Col'
 
 class CheckinInfo extends Component {
-
-    constructor(props) {
-      super(props)
-      this.state = {
-        val: ''
-      }
-    }
   
     render() {
       return (

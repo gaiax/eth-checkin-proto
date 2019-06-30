@@ -13,7 +13,6 @@ class AddPlace extends Component {
             buffer: null,
         }
         this.captureFile = this.captureFile.bind(this);
-        //this.onSubmit = this.onSubmit.bind(this); 
     } 
 
     captureFile(event) {

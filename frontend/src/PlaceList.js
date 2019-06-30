@@ -5,21 +5,8 @@ import Row from 'react-bootstrap/Row'
 import Col from 'react-bootstrap/Col'
 import ListGroup from 'react-bootstrap/ListGroup'
 
-import { PLACE_LIST_ABI, PLACE_LIST_ADDRESS } from './config'
-import web3 from './web3.js'
-const placeList = new web3.eth.Contract(PLACE_LIST_ABI, PLACE_LIST_ADDRESS)
-
-
 class PlaceList extends Component {
   
-  componentWillMount() {
-    this.loadBlockchainData()
-  }
-  
-  async loadBlockchainData() {   
-    this.setState({ placeList }) 
-  }
-
   constructor(props) {
     super(props)
     this.state = {

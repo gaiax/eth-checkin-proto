@@ -5,13 +5,6 @@ import Col from 'react-bootstrap/Col'
 
 class PlaceInfo extends Component {
 
-  constructor(props) {
-    super(props)
-    this.state = {
-      placeid: '',
-    }
-  }
-
   render() {
     return (
       <Container>
@@ -29,7 +22,6 @@ class PlaceInfo extends Component {
                   <p className="content">オーナーアドレス{place.owner}</p>
                   <p className="content">緯度 : {place.latitude}</p>
                   <p className="content">経度 : {place.longitude}</p>
-                  <p>{place.ipfsHash}</p>
                   <img src= {`https://ipfs.io/ipfs/${place.ipfsHash}`} alt=""></img>
                 </div>  
               )  

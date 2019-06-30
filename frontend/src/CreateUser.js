@@ -10,8 +10,9 @@ class CreateUser extends Component {
   constructor(props) {
     super(props)
     this.state= {
-      
+      buffer: null,
     }
+    this.captureFile = this.captureFile.bind(this);
   }
 
   captureFile(event) {
@@ -41,7 +42,7 @@ class CreateUser extends Component {
         <Form
           onSubmit={(event) => {
           event.preventDefault()
-          this.props.createUser(this.user.value)
+          this.props.createUser(this.user.value, this.state.buffer)
         }}>
           <Form.Group as={Row}>
             <Form.Label column sm={3}>名前</Form.Label>
@@ -74,12 +75,7 @@ class CreateUser extends Component {
               <Button type="submit">登録</Button>
             </Col>
           </Form.Group>
-        </Form>  
-        <Row>
-          <Col sm={12}>
-            <p>名前：{this.props.userInfo.userName}</p>
-          </Col>
-        </Row>       
+        </Form>       
       </Container>
     )
   } 

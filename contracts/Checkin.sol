@@ -1,15 +1,13 @@
 pragma solidity >=0.4.21 <0.6.0;
 pragma experimental ABIEncoderV2;
 
-contract PlaceList {
+contract Checkin {
   uint public placeCount = 0;
   uint public checkinCount = 0;
-  // ? publicで良いのか？ 
   address internal admin;
 
   struct User {
     string userName;
-    // mappingで組み込まれてるけどいるかな
     string ipfsHash;
   }
 
@@ -30,13 +28,6 @@ contract PlaceList {
     string longitude;
   }
 
-  struct Hoge {
-    uint id;
-    string text;
-  }
-
-  //mapping(uint => Place) public places;
-  //mapping(address => Checkin) public checkinListForUser;
   Place[] public places;
   Checkin[] internal checkins;
   mapping(address => User) public users;
@@ -47,8 +38,6 @@ contract PlaceList {
 
   constructor() public {
     admin = msg.sender;
-    //places.push(Place(1, 0x6322eA177D669Ff5674412B49FcE7EB05E8D167E, "MyPlace", "QmTjzYr14n12YAB4bEMj2fEKcNL3G2TBtBKNxFCRe2Bxtg", "35.737950000000005", "139.7400068" ));
-    //placeCount++;
   }
 
   function createUser(string memory _userName, string memory _ipfsHash) public {
@@ -63,15 +52,12 @@ contract PlaceList {
 
   function createPlace(string memory _name, string memory _ipfsHash, string memory _latitude, string memory _longitude) public {
     placeCount ++;
-    // places[placeCount] = Place(placeCount, msg.sender, _name, _ipfsHash, _latitude, _longitude);
     places.push(Place(placeCount, msg.sender, _name, _ipfsHash, _latitude, _longitude));
     emit CreatePlace(placeCount, msg.sender, _name, _ipfsHash, _latitude, _longitude);
   }
 
   function userCheckIn(uint placeid, string memory _latitude, string memory _longitude) public {
-    //checkinListForUser[msg.sender] = Checkin(placeid, msg.sender, now, _latitude, _longitude);
     checkins.push(Checkin(placeid, msg.sender, now, _latitude, _longitude));
-    //checkinCount ++;
     emit CheckIn(placeid, msg.sender, now, _latitude, _longitude);
   } 
 

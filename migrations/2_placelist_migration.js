@@ -1,7 +1,7 @@
-var PlaceList = artifacts.require("./PlaceList.sol");
+var Checkin = artifacts.require("./Checkin.sol");
 
 module.exports = function(deployer) {
-  deployer.deploy(PlaceList).then(instance => {
+  deployer.deploy(Checkin).then(instance => {
     console.log('ABI:',JSON.stringify(instance.abi))
   })  
 };
