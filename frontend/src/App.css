@@ -1,0 +1,53 @@
+.navbar {
+  border-bottom: 1px solid grey;
+  position: fixed;
+  width: 100%;
+  box-shadow: 0 3px 6px rgba(0,0,0,0.2);
+  z-index: 3;
+}
+
+.flex-column {
+  position: fixed;
+}
+
+.loader {
+  text-align: center;
+  padding-top: 80px;
+}
+
+.body-container {
+  padding-top: 70px
+}
+
+img {
+  width: 100%;
+}
+
+.AddPlace {
+  border: 2px solid grey;
+  border-radius: 8px;
+  padding: 20px; 
+  text-align: center;
+}
+
+.CreateUser {
+  border: 2px solid grey;
+  border-radius: 8px;
+  padding: 20px; 
+  text-align: center;
+}
+
+.checkinList {
+  padding-left: 5px;
+  border-bottom: 1px dashed #81D4FA;
+}
+
+.checkinList {
+  float: left;
+}
+
+#placeImage {
+  width: 55px;
+  height: 55px;
+}
+
