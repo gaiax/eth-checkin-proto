@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import web3 from './web3.js'
+//import Web3 from 'web3'
 import ipfs from "./ipfs.js";
 import CheckinContract from './abis/Checkin.json'
 import './App.css'
@@ -20,6 +21,7 @@ import PlaceInfo from './PlaceInfo.js'
 import Admin from './Admin.js'
 import CreateUser from './CreateUser.js'
 import VisiterList from './VisiterList.js'
+import Guidline from './Guideline.js'
 
 
 class App extends Component {
@@ -29,6 +31,8 @@ class App extends Component {
   
   async loadBlockchainData() {   
     try {
+      //const web3 = new Web3(Web3.givenProvider || 'http://localhost:7545')
+      //const network = await web3.eth.net.getNetworkType()
       const networkId = await web3.eth.net.getId()
       const placeList = new web3.eth.Contract(CheckinContract.abi, CheckinContract.networks[networkId].address)
       this.setState({ placeList })  
@@ -77,8 +81,8 @@ class App extends Component {
         async () => {
           //自分に近いものだけ表示
           const nearplace = await this.state.places.filter(item => 
-            Number(item.latitude) > this.state.latitude - 1.01
-            && Number(item.latitude) < this.state.latitude + 1.01
+            Number(item.latitude) > this.state.latitude - 0.13
+            && Number(item.latitude) < this.state.latitude + 0.13
           );
           this.setState({
             nearplaces: nearplace
@@ -286,14 +290,16 @@ class App extends Component {
   createUser = async (userName, ipfsHash) => {
     console.log('on Submit ...')
     this.setState({ loading: true })
-    const accounts = await web3.eth.getAccounts()
-    this.setState({ account: accounts[0] })
+    //const accounts = await web3.eth.getAccounts()
+    //this.setState({ account: accounts[0] })
     await ipfs.files.add(ipfsHash, async (error, result) => {
       if(error) { console.error(error)
         return
       }
-      this.state.placeList.methods.createUser(userName, result[0].hash).send({ from: this.state.account })    
+      this.state.placeList.methods.createUser(userName, result[0].hash).send({ from: this.state.account })   
+      .once('receipt', (receipt) => { console.log(receipt) }) 
     }) 
+    console.log(1)
     return this.setState({ loading: false })
   }
 
@@ -328,20 +334,23 @@ class App extends Component {
             <Col sm={2}>
               <Nav variant="pills" className="flex-column">
                 <Nav.Item>
-                  <Nav.Link eventKey="first">チェックイン</Nav.Link>
+                  <Nav.Link eventKey="first">Guidline</Nav.Link>
                 </Nav.Item>
                 <Nav.Item>
-                  <Nav.Link eventKey="second">場所の管理</Nav.Link>
+                  <Nav.Link eventKey="second">1. ユーザー登録</Nav.Link>
                 </Nav.Item>
                 <Nav.Item>
-                  <Nav.Link eventKey="third">場所の登録</Nav.Link>
+                  <Nav.Link eventKey="third">2. チェックイン</Nav.Link>
                 </Nav.Item>
                 <Nav.Item>
-                  <Nav.Link eventKey="forth">ユーザー登録</Nav.Link>
+                  <Nav.Link eventKey="forth">場所の登録</Nav.Link>
                 </Nav.Item>
+                <Nav.Item>
+                  <Nav.Link eventKey="fifth">場所の確認</Nav.Link>
+                </Nav.Item> 
                 { this.state.account === this.state.admin ?
                   <Nav.Item>
-                    <Nav.Link eventKey="fifth">管理者用</Nav.Link>
+                    <Nav.Link eventKey="sixth">管理者用</Nav.Link>
                   </Nav.Item> 
                   : 
                   <></> 
@@ -353,7 +362,28 @@ class App extends Component {
                 { this.state.loading ? <h3 className="loader">loading...</h3> :
                 <Tab.Content>
                   <Tab.Pane eventKey="first">
+                    <Guidline />
+                  </Tab.Pane>
+                  <Tab.Pane eventKey="second">
                     <Row>
+                      <Col className="guide" sm={12}>
+                        <p>登録したいユーザーの名前を記入し、ユーザーのアイコンをアップロードします。</p>
+                      </Col>
+                      <Col>
+                        <CreateUser 
+                          createUser={this.createUser}
+                          userInfo={this.state.userInfo}
+                        />
+                      </Col>
+                    </Row>    
+                  </Tab.Pane>
+                  <Tab.Pane eventKey="third">    
+                    <Row>
+                      <Col className="guide" sm={12}>
+                        <p>Check-inする場所を一覧から選び、「Check-in」を押します。<br/>
+                          トランザクションが完了すると、自分のCheck-inのリストと訪問者の一覧が表示されます。
+                        </p>
+                      </Col>
                       <Col sm={6}>
                         <PlaceList
                           placeList={this.state.placeList}
@@ -383,10 +413,26 @@ class App extends Component {
                           </> : 
                         <></> }
                       </Col>
-                    </Row> 
+                    </Row>
                   </Tab.Pane>
-                  <Tab.Pane eventKey="second">    
+                  <Tab.Pane eventKey="forth"> 
                     <Row>
+                      <Col className="guide" sm={12}>
+                        <p>登録したい場所の名前を記入し、場所のアイコンをアップロードします。</p>
+                      </Col>
+                      <Col>
+                        <AddPlace 
+                          createPlace={this.createPlace}
+                          position={this.position}
+                        />
+                      </Col>
+                    </Row>
+                  </Tab.Pane>
+                  <Tab.Pane eventKey="fifth">
+                    <Row>
+                      <Col className="guide" sm={12}>
+                        <p>登録した場所と、その場所にcheck-inしたユーザーの情報をみることができます。</p>
+                      </Col>
                       <Col sm={6} >
                         <PlaceInfo
                           placeinfo={this.state.placeinfo}
@@ -399,36 +445,15 @@ class App extends Component {
                       </Col>
                     </Row>
                   </Tab.Pane>
-                  <Tab.Pane eventKey="third">    
-                    <Row>
-                      <Col>
-                        <AddPlace 
-                          createPlace={this.createPlace}
-                          position={this.position}
-                        />
-                      </Col>
-                    </Row>
-                  </Tab.Pane>
-                  <Tab.Pane eventKey="forth">    
-                    <Row>
-                      <Col>
-                        <CreateUser 
-                          createUser={this.createUser}
-                          userInfo={this.state.userInfo}
-                        />
-                      </Col>
-                    </Row>
-                  </Tab.Pane>
                   <Tab.Pane eventKey="fifth">
                     { this.state.account === this.state.admin ? (
-                    <>
-                      <Admin 
-                        places = {this.state.places}
-                        checkins = {this.state.allCheckinList}
-                      />
-                    </>) : (
-                    <>
-                    </>)}
+                      <>
+                        <Admin 
+                          places = {this.state.places}
+                          checkins = {this.state.allCheckinList}
+                        />
+                      </>) : (<></>
+                    )}
                   </Tab.Pane>
                 </Tab.Content>}
               </Col>

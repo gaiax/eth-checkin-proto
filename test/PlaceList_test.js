@@ -1,5 +1,5 @@
 
-var PlaceList = artifacts.require('./PlaceList.sol');
+var PlaceList = artifacts.require('./Checkin.sol');
 
 contract('PlaceList', function(accounts) {
   var placeListInstance;

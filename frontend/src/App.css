@@ -19,8 +19,23 @@
   padding-top: 70px
 }
 
+.guide {
+  background-color: #DDDDDD;
+  border: 2px solid grey;
+  padding-top: 8px;
+  margin: 10px;
+  text-align: center;
+}
+
 img {
   width: 100%;
+}
+
+.image-guideline {
+  border: 2px solid grey;
+  width: 70%;
+  padding: 10px;
+  margin: 10px;
 }
 
 .AddPlace {
