@@ -16,7 +16,7 @@ class VisiterList extends Component {
               return(
                 <div className="checkinList" key={key}>
                   <Card style={{ width: '12rem' }}>
-                    <Card.Img variant="top" src="holder.js/100px180" />
+                    <Card.Img variant="top" src= {`https://ipfs.io/ipfs/${checkin.ipfsHash}`} />
                     <Card.Body>
                       <Card.Text>
                         <span>名前：{checkin.userName}</span>

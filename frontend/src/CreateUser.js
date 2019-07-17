@@ -33,49 +33,56 @@ class CreateUser extends Component {
 
   render(){
     return(
-      <Container className="CreateUser">
-        <Row>
-          <Col sm={12}>
-            <h2>ユーザー登録</h2>
-          </Col>
-        </Row>
-        <Form
-          onSubmit={(event) => {
-          event.preventDefault()
-          this.props.createUser(this.user.value, this.state.buffer)
-        }}>
-          <Form.Group as={Row}>
-            <Form.Label column sm={3}>名前</Form.Label>
-            <Col sm={9}>
-              <Form.Control 
-                id="userName"
-                type="text"
-                ref={(input) => {
-                    this.user = input
-                }}
-                className="form-control"
-                placeholder="Type User Name..."
-                autoFocus={true}
-                required /> 
+      <Container>
+        <div className="CreateUser">
+          <Row>
+            <Col sm={12}>
+              <h2>ユーザー登録</h2>
             </Col>
-          </Form.Group>
-          <Form.Group as={Row}>
-            <Form.Label column sm={4}>イメージ画像</Form.Label>
-            <Col sm={8}>
-              <Form.Control 
-                id="image"
-                type="file"  
-                className="form-control"
-                onChange={this.captureFile}
-                required /> 
+          </Row>
+          <Form
+            onSubmit={(event) => {
+            event.preventDefault()
+            this.props.createUser(this.user.value, this.state.buffer)
+          }}>
+            <Form.Group as={Row}>
+              <Form.Label column sm={3}>名前</Form.Label>
+              <Col sm={9}>
+                <Form.Control 
+                  id="userName"
+                  type="text"
+                  ref={(input) => {
+                      this.user = input
+                  }}
+                  className="form-control"
+                  placeholder="Type User Name..."
+                  autoFocus={true}
+                  required /> 
+              </Col>
+            </Form.Group>
+            <Form.Group as={Row}>
+              <Form.Label column sm={4}>イメージ画像</Form.Label>
+              <Col sm={8}>
+                <Form.Control 
+                  id="image"
+                  type="file"  
+                  className="form-control"
+                  onChange={this.captureFile}
+                  required /> 
+              </Col>
+            </Form.Group>
+            <Form.Group as={Row}>
+              <Col sm={{ span: 3, offset: 9 }}>
+                <Button type="submit">登録</Button>
+              </Col>
+            </Form.Group>
+          </Form>    
+          <Row>
+            <Col sm={12}>
+              <p>ユーザ名：{this.props.userInfo.userName}</p>
             </Col>
-          </Form.Group>
-          <Form.Group as={Row}>
-            <Col sm={{ span: 3, offset: 9 }}>
-              <Button type="submit">登録</Button>
-            </Col>
-          </Form.Group>
-        </Form>       
+          </Row>  
+        </div>   
       </Container>
     )
   } 
