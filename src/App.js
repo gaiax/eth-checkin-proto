@@ -13,7 +13,7 @@ class App extends Component {
   }
   
   async loadBlockchainData() {
-    const web3 = new Web3(Web3.givenProvider || 'http://localhost:7545')
+    const web3 = new Web3(Web3.givenProvider || 'https://ropsten.infura.io/v3/19fda31148fc4dc89c7f353ffd25d15b')
     //const network = await web3.eth.net.getNetworkType()
     const networkId = await web3.eth.net.getId()
     const accounts = await web3.eth.getAccounts()
@@ -31,7 +31,6 @@ class App extends Component {
       const tokenURI = await this.state.token.methods.tokenURI(i).call()
       const tokenName = await this.state.token.methods.getTokenName(i).call()
       const referencedTokenIds = await this.state.token.methods.getRereferencedTokenId(i).call()
-      console.log(referencedTokenIds)
       var items = []
       items["tokenID"] = i;
       items["tokenURI"] = tokenURI;
