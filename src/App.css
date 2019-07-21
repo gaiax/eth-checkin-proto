@@ -1,0 +1,72 @@
+.title {
+  text-align: center;
+  margin-top: 10px;
+}
+
+/* ------------------ コンテンツマッピング ------------------*/
+.content {
+
+}
+
+.payment-form {
+  padding: 5px;
+}
+
+.amount-input {
+  width: 100%;
+}
+
+#graph-id{
+  border: 2px solid grey;
+  height: 300px;
+}
+
+.tokenMap {
+  border: 2px solid grey;
+  margin-top: 10px;
+  margin-left: 7%;
+  margin-right: 10px;
+  margin-bottom: 10px;
+}
+
+/* ------------------ コンテンツの追加 ------------------*/
+
+.add-content {
+  margin-top: 10px;
+  margin-bottom: 10px;
+  text-align: center;
+}
+
+#tokenId {
+  margin: 10px;
+  width: 20%;
+}
+
+#distributionRate {
+  margin: 10px;
+  width: 20%;
+}
+
+.table.table-for-ref {
+  text-align: center;
+  width: 60%;
+}
+
+/* ------------------ コンテンツリスト ------------------*/
+.contents-list {
+  margin-top: 20px;
+  margin-left: 7%;
+}
+
+.card {
+  width: 17%;
+  height: 50%;
+  float: left;
+  margin-left: 5px;
+  margin-bottom: 5px;
+}
+
+.card-detail {
+  width: 70%;
+  margin-top: 9px;
+}
