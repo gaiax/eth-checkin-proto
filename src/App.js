@@ -6,6 +6,7 @@ import ipfs from "./ipfs.js";
 import Token from './abis/TraceableToken.json'
 import ForceDirected from './FroceDirected'
 import ContentsList from './ContentsList'
+import Guideline from './Guideline.js'
 
 class App extends Component {
   componentWillMount() {
@@ -36,8 +37,6 @@ class App extends Component {
       items["tokenURI"] = tokenURI;
       items["tokenName"] = tokenName;
       items["referencedTokenIds"] = referencedTokenIds;
-      // this.setState({tokenID: i, tokenURI, tokenName ,rereferencedTokenIds})
-      // let items = {tokenID: i, tokenURI, tokenName ,rereferencedTokenIds}
       this.setState({
         tokenData: [...this.state.tokenData, items]
       })
@@ -98,7 +97,7 @@ class App extends Component {
   render() {
     return (
       <div>
-        <nav className="navbar navbar-expand-lg navbar-dark bg-primary">
+        <nav className="navbar navbar-expand-lg navbar-dark bg-info">
           <a className="navbar-brand" href="/">ERC721 TraceableToken</a>
           <button className="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
             <span className="navbar-toggler-icon"></span>
@@ -119,6 +118,7 @@ class App extends Component {
         <div className="container-fluid">
           { this.state.loading ? <h3 className="loader">loading...</h3> : 
             <>
+              <Guideline />
               <ForceDirected 
                 data = {this.state.data} 
                 tokenData = {this.state.tokenData} 

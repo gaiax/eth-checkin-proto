@@ -70,9 +70,9 @@ class ForceDirected extends Component {
           </div>
           <div className="col-sm-3">
             { this.state.show ? 
-              <div className="card-detail bg-dark text-white" >
+              <div className="card card-detail border-info text-black" >
                 <div className="card-header">
-                  Name :<a href= {`https://ipfs.io/ipfs/${this.props.tokenData[Number(this.state.nodeId)-1].tokenURI}`} className="card-link">{this.props.tokenData[Number(this.state.nodeId)-1].tokenName}</a>
+                  <a href= {`https://ipfs.io/ipfs/${this.props.tokenData[Number(this.state.nodeId)-1].tokenURI}`} className="card-link">{this.props.tokenData[Number(this.state.nodeId)-1].tokenName}</a>
                 </div>
                 <div className="card-body">
                   <p className="card-text">Rereferenced Token Ids: 
@@ -100,12 +100,12 @@ class ForceDirected extends Component {
                       required />  
                   </div>
                   <div className="col-sm-5 col-sm-auto pl-sm-0">
-                    <button type="submit" className="btn btn-primary btn-block btn-sm">支払う</button>
+                    <button type="submit" className="btn btn-info btn-block btn-sm">支払う</button>
                   </div>
                 </form>
                 { this.state.button ? 
-                  <button type="submit" className="btn btn-primary btn-block btn-sm" onClick={this.addReference}>追加</button> :
-                  <button type="submit" className="btn btn-primary btn-block btn-sm" disabled >追加</button>
+                  <button type="submit" className="btn btn-info btn-block btn-sm" onClick={this.addReference}>追加</button> :
+                  <button type="submit" className="btn btn-info btn-block btn-sm" disabled >追加</button>
                 }
               </div>
               : 

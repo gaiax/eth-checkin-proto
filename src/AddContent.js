@@ -68,8 +68,8 @@ class AddContent extends Component {
               await this.props.onSubmit(this.state.buffer, this.state.name, this.props.ids, this.state.rates)
             }}>
               <input 
-                className="btn btn-primary btn-sm"
-                value="追加"
+                className="btn btn-info btn-sm"
+                value="登録"
                 type="submit" />
             </form>
           </div>  

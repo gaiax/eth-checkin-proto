@@ -18,7 +18,7 @@ class ContentsList extends Component {
           <div className="contents-list col-sm-12">
             { this.props.tokenData.map((item, key) => {
               return (
-                <div className="card bg-dark text-white" key={key} >
+                <div className="card border-info text-black" key={key} >
                   <div className="card-header">
                     <a href= {`https://ipfs.io/ipfs/${item.tokenURI}`} className="card-link">{item.tokenName}</a>
                   </div>
