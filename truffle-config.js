@@ -1,18 +1,16 @@
-require('babel-register');
-require('babel-polyfill');
-require('dotenv').config();
 const HDWalletProvider = require('truffle-hdwallet-provider');
+require('dotenv').config();
 const mnemonic = process.env.MNEMONIC
 const infuraKey = process.env.INFURA_API_KEY
+
 
 module.exports = {
 
   networks: {
-
     development: {
-      host: "127.0.0.1",     
-      port: 7545,            
-      network_id: "*",       
+     host: "127.0.0.1",     // Localhost (default: none)
+     port: 7545,            // Standard Ethereum port (default: none)
+     network_id: "*",       // Any network (default: none)
     },
 
     ropsten: {
@@ -23,23 +21,9 @@ module.exports = {
       timeoutBlocks: 200,  // # of blocks before a deployment times out  (minimum/default: 50)
       skipDryRun: true     // Skip dry run before migrations? (default: false for public nets )
     },
-
   },
 
-  contracts_directory: './src/contracts/',
+  contracts_directory: './contracts/',
   contracts_build_directory: `./src/abis/`,
 
-  mocha: {
-    // timeout: 100000
-  },
-
-  // Configure your compilers
-  compilers: {
-    solc: {
-      optimizer: {
-        enabled: true,
-        runs: 200
-      }
-    }
-  }
 }

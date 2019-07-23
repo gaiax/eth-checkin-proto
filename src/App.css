@@ -1,85 +1,96 @@
-.title {
-  text-align: center;
-  margin-top: 10px;
+.navbar {
+  border-bottom: 1px solid grey;
+  position: fixed;
+  width: 100%;
+  box-shadow: 0 3px 6px rgba(0,0,0,0.2);
+  z-index: 3;
 }
 
-/* ------------------ コンテンツマッピング ------------------*/
+.nav-text {
+  color: black;
+}
+
+/* Inactive tab */
+.flex-column ul > li > a {
+  background-color: white;
+  color: red;
+}
+.flex-column ul > li > a:hover {
+  background-color: pink;
+}
+
+/* Active tab */
+.flex-column ul > li.active > a,
+.flex-column ul > li.active > a:hover,
+.flex-column ul > li.active > a:focus {
+  background-color: red;
+  color: white;
+}
+
+/* Disabled tab */
+.flex-column ul > li.disabled > a {
+  background-color: lightgray;
+  color: darkgray;
+}
+
+.flex-column {
+  position: fixed;
+  color: black;
+}
+
+.loader {
+  text-align: center;
+  padding-top: 80px;
+}
+
+.body-container {
+  padding-top: 70px
+}
 
 .guide {
   background-color: #F0F8FF;
   border: 2px solid grey;
+  padding-top: 8px;
+  margin: 10px;
   text-align: center;
-  padding-top: 15px;
-  padding-bottom: 15px;
-  margin: 0 auto;
-  margin-top: 20px;
-  width: 90%;
 }
 
-/* ------------------ コンテンツマッピング ------------------*/
-.content {
-
-}
-
-.payment-form {
-  padding: 5px;
-}
-
-.amount-input {
+img {
   width: 100%;
 }
 
-#graph-id{
+.image-guideline {
   border: 2px solid grey;
-  height: 300px;
-}
-
-.tokenMap {
-  border: 2px solid grey;
-  margin-top: 10px;
-  margin-left: 7%;
-  margin-right: 10px;
-  margin-bottom: 10px;
-}
-
-/* ------------------ コンテンツの追加 ------------------*/
-
-.add-content {
-  margin-top: 10px;
-  margin-bottom: 10px;
-  text-align: center;
-}
-
-#tokenId {
-  margin: 10px;
-  width: 20%;
-}
-
-#distributionRate {
-  margin: 10px;
-  width: 20%;
-}
-
-.table.table-for-ref {
-  text-align: center;
-  width: 60%;
-}
-
-/* ------------------ コンテンツリスト ------------------*/
-.contents-list {
-  margin-top: 20px;
-  margin-left: 7%;
-}
-
-.card {
-  width: 17%;
-  height: 50%;
-  float: left;
-  margin-left: 5px;
-  margin-bottom: 5px;
-}
-
-.card-detail {
   width: 70%;
-  margin-top: 9px;
+  padding: 10px;
+  margin: 10px;
 }
+
+.AddPlace {
+  border: 2px solid grey;
+  border-radius: 8px;
+  padding: 20px; 
+  text-align: center;
+}
+
+.CreateUser {
+  border: 2px solid grey;
+  border-radius: 8px;
+  padding: 20px; 
+  text-align: center;
+}
+
+.checkinList {
+  padding-left: 5px;
+  border-bottom: 1px dashed #81D4FA;
+}
+
+.checkinList {
+  float: left;
+}
+
+#placeImage {
+  width: 55px;
+  height: 55px;
+}
+
