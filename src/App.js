@@ -125,8 +125,7 @@ class App extends Component {
       for (var l = 0; l < userCount; l++) {
         const checkin = await this.state.placeList.methods.getCheckinListForUser(l, this.state.account).call()
         // 全てのチェックインの情報から自分のチェックインだけを取る
-        console.log(checkin)
-        if (checkin[0]._hex !== "0x00") {
+        if (checkin[0] !== "0") {
           checkin.checkintime  = new Date(checkin.checkintime * 1000)
           this.setState({
             checkinListForUser: [...this.state.checkinListForUser, checkin]
@@ -228,6 +227,14 @@ class App extends Component {
     await console.log(createPlaceEvent)
   }
 
+  async listenCreateUserEvents() {
+    const createUserEvent = await this.state.placeList.events.CreateUser({}, {
+      fromBlock: 0,
+      toBlock: 'latest',
+    })
+    await console.log(createUserEvent)
+  }
+
   constructor(props) {
     super(props)
     this.state = {
@@ -270,12 +277,13 @@ class App extends Component {
       if(error) { console.error(error)
         return
       }
-      this.state.placeList.methods.createPlace(name, result[0].hash, latitude, longitude).send({ from: this.state.account })
+      await this.state.placeList.methods.createPlace(name, result[0].hash, latitude, longitude).send({ from: this.state.account })
+      .once('receipt', (receipt) => { this.setState({ loading: false }) })
     }) 
     await this.listenCreatePlaceEvents()
     await this.loadPlaceInfo()
-    return this.setState({ loading: false })
   }
+  
   // Checkinする関数
   userCheckIn = async (placeId) => {
     this.setState({ loading: true })
@@ -302,11 +310,9 @@ class App extends Component {
       if(error) { console.error(error)
         return
       }
-      this.state.placeList.methods.createUser(userName, result[0].hash).send({ from: this.state.account })   
-      .once('receipt', (receipt) => { console.log(receipt) }) 
+      await this.state.placeList.methods.createUser(userName, result[0].hash).send({ from: this.state.account })   
+      .once('receipt', (receipt) => { this.setState({ loading: false }) }) 
     }) 
-    console.log(1)
-    return this.setState({ loading: false })
   }
 
   // 位置情報を確認する関数（たまにGeoglapic APIが作動しなくなるため）
@@ -451,7 +457,7 @@ class App extends Component {
                       </Col>
                     </Row>
                   </Tab.Pane>
-                  <Tab.Pane eventKey="fifth">
+                  <Tab.Pane eventKey="sixth">
                     { this.state.account === this.state.admin ? (
                       <>
                         <Admin 

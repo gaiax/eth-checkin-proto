@@ -85,8 +85,10 @@ img {
   border-bottom: 1px dashed #81D4FA;
 }
 
-.checkinList {
+.visiter-checkinList {
   float: left;
+  margin-right: 10px;
+  margin-bottom: 10px;
 }
 
 #placeImage {

@@ -14,7 +14,7 @@ class VisiterList extends Component {
           { this.props.visiterList.length > 0 ? <h2>Welcome to {this.props.places[Number(this.props.checkinsForUser[0].placeid)-1].name} </h2> : <></> }
             { this.props.visiterList.map((checkin, key) => {
               return(
-                <div className="checkinList" key={key}>
+                <div className="visiter-checkinList" key={key}>
                   <Card style={{ width: '12rem' }}>
                     <Card.Img variant="top" src= {`https://ipfs.io/ipfs/${checkin.ipfsHash}`} />
                     <Card.Body>
