@@ -22,6 +22,7 @@ import Admin from './Admin.js'
 import CreateUser from './CreateUser.js'
 import VisiterList from './VisiterList.js'
 import Guidline from './Guideline.js'
+import Spinner from './Spinner.js'
 
 
 class App extends Component {
@@ -278,10 +279,11 @@ class App extends Component {
         return
       }
       await this.state.placeList.methods.createPlace(name, result[0].hash, latitude, longitude).send({ from: this.state.account })
-      .once('receipt', (receipt) => { this.setState({ loading: false }) })
+      .once('receipt', async (receipt) => { 
+        await this.loadPlaceInfo()
+        await this.setState({ loading: false }) 
+      })
     }) 
-    await this.listenCreatePlaceEvents()
-    await this.loadPlaceInfo()
   }
   
   // Checkinする関数
@@ -311,7 +313,10 @@ class App extends Component {
         return
       }
       await this.state.placeList.methods.createUser(userName, result[0].hash).send({ from: this.state.account })   
-      .once('receipt', (receipt) => { this.setState({ loading: false }) }) 
+      .once('receipt', async (receipt) => { 
+        await this.loadUserInfo()
+        await this.setState({ loading: false }) 
+      }) 
     }) 
   }
 
@@ -371,7 +376,7 @@ class App extends Component {
             </Col>             
               <>
               <Col sm={9}>
-                { this.state.loading ? <h3 className="loader">loading...</h3> :
+                { this.state.loading ? <div className="loader"><h3>loading...</h3><p>トランザクションの読み込みに時間がかかる場合があります...  <Spinner /></p></div>:
                 <Tab.Content>
                   <Tab.Pane eventKey="first">
                     <Guidline />

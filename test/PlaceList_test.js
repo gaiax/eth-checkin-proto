@@ -20,7 +20,6 @@ contract('PlaceList', function(accounts) {
   it('facilitates admin is secured', function() {
     return PlaceList.deployed().then(function(instance) {
       placeListInstance = instance;
-      return placeListInstance.getAdmin(user1)
       return placeListInstance.getAdmin(admin);
     }).then(function(address) {
       adminFromContract = address;
@@ -31,18 +30,15 @@ contract('PlaceList', function(accounts) {
   it('facilitates create user function', function() {
     return PlaceList.deployed().then(function(instance) {
       placeListInstance = instance;
-      return placeListInstance.createUser("Sample1", {from: user1});
+      return placeListInstance.createUser("Sample1", "QmTjzYr14n12YAB4bEMj2fEKcNL3G2TBtBKNxFCRe2Bxtg", {from: user1});
     }).then(function(receipt) {
-      console.log(receipt)
       assert.equal(receipt.logs.length, 1, 'triggers one event');
       assert.equal(receipt.logs[0].event, 'CreateUser', 'should be the "CreateUser" event');
       assert.equal(receipt.logs[0].args.userName, "Sample1", 'logs the user name');
-      assert.equal(receipt.logs[0].args.userAddress, user1, 'logs the user address');
       return placeListInstance.users(user1)
     }).then(function(result) {
       user = result
       assert.equal(user.userName, "Sample1" , 'Smample1 is the name of User1')
-      assert.equal(user.userAddress, user1, 'Address should be same as user1')
     })
   })
 
@@ -139,16 +135,6 @@ contract('PlaceList', function(accounts) {
     }).then(function(number) {
       numberOfCheckin = number;
       assert.equal(numberOfCheckin, 2);
-    })
-  })
-
-  it('facilitates number of place and check-in', function() {
-    return PlaceList.deployed().then(function(instance) {
-      placeListInstance = instance;
-      return placeListInstance.hogehoge()
-    }).then(function(result) {
-      hoges = result;
-      assert.equal(hoges.id, 1);
     })
   })
 
