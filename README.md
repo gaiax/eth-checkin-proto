@@ -1,6 +1,9 @@
 # eth-checkin-proto
 Ethereumを使ったチェックインアプリのプロトタイプです。
 
+https://oss.gaiax-blockchain.com/check-in/
+(MetamaskでRopstenを選択してください)
+
 ## Setup
 
 ```bash
