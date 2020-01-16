@@ -1,32 +1,57 @@
-# eth-checkin-proto
-Ethereumを使ったチェックインアプリのプロトタイプです。
+# checkin-app
+Checkin application using Ethereum
 
+## Web demosite
 https://oss.gaiax-blockchain.com/check-in/
-(MetamaskでRopstenを選択してください)
 
-## Setup
+
+## Contributing
+Pull requests and stars are always welcome.
+
+1. Fork it!
+2. Create your feature branch.
+```
+git checkout -b my-new-feature.
+``` 
+3. Commit your changes
+```
+git commit -am 'Add some feature.
+``` 
+4. Push to the branch.
+```
+git push origin my-new-feature
+``` 
+5. Submit a pull request 
+For bugs and feature requests, [create an issue](https://github.com/gaiax/eth-checkin-proto/issues).
+
+
+## Developer's guide
+
+### Installation
 
 ```bash
-# Setup Truffle 
+$ git clone git@github.com:gaiax/eth-checkin-proto.git
+$ cd eth-checkin-proto
+
+# Install Truffle dependencies
 $ npm i
 
-# Setup frontend 
+# Install frontend dependencies
 $ cd frontend
 $ npm i
 ```
 
-## build local blockchain and deploy
+### build local blockchain and deploy
 
-・Install Ganache（ https://www.trufflesuite.com/ganache ）</br>
-・Launch Ganache
-
+1. Install Ganache. (https://www.trufflesuite.com/ganache)
+2. Launch Ganache
+3. Deploy contracts to local blockchain
 ```bash
-# deploy contracts to local blockchain
 $ truffle compile
 $ truffle migrare --reset
 ```
 
-## Run
+### Run
 
 ```bash
 # launch web view
@@ -34,13 +59,3 @@ $ cd frontend
 $ npm start
 ```
 
-## ディレクトリの説明
-
-・contracts: スマートコントラクトをかくSolidityのコードのためのディレクトリ</br>
-・migration: ブロックチェーンにmigrateする際に必要なコードのためにディレクトリ</br>
-・test: コントラクトのテストのためにディレクトリ</br>
-
-・frontend: アプリケーションのためにディレクトリ </br>
-&nbsp; &ensp;|- public:</br>
-&nbsp; &ensp;|- src: </br>
-&nbsp; &ensp; &emsp; |-abi: コントラクトのJSONファイルのためにディレクトリ　</br>

@@ -398,8 +398,8 @@ class App extends Component {
                     <Row>
                       <Col className="guide" sm={12}>
                         <p>Check-inする場所を一覧から選び、「Check-in」を押します。<br/>
-                          トランザクションが完了すると、自分のCheck-inのリストと訪問者の一覧が表示されます。
-                        </p>
+                          トランザクションが完了すると、自分のCheck-inのリストと訪問者の一覧が表示されます。</p>
+                        <p className="small">*一覧が出ない場合は、ブラウザの位置情報取得を許可し、「システム環境設定」→「セキュリティーとプライバシー」→「位置情報サービスを有効にする」で位置情報を取得できる状態に設定しておいてください。</p>
                       </Col>
                       <Col sm={6}>
                         <PlaceList
