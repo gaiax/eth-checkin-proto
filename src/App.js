@@ -46,9 +46,14 @@ class App extends Component {
         console.log(e)
       } 
     } catch (error) {
-      alert(
-        `Failed to load web3, accounts, or contract. Check console for details.`,
-      );
+      var result = window.confirm('Metamaskをダウンドードし、ネットワークをRoptenに設定してください。ダウンロードの方法のページを開きますか？');
+    
+      if( result ) {
+        await window.open( 'https://www.sejuku.net/blog/');
+      }
+      else {
+        console.log('キャンセルがクリックされました');
+      }
       console.error(error);
     }
     await this.loadPlaceInfo();
