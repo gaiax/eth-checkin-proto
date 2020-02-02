@@ -49,7 +49,7 @@ class App extends Component {
       var result = window.confirm('Metamaskをダウンドードし、ネットワークをRoptenに設定してください。ダウンロードの方法のページを開きますか？');
     
       if( result ) {
-        await window.open( 'https://www.sejuku.net/blog/');
+        await window.open('https://oss.gaiax-blockchain.com/metamask.html');
       }
       else {
         console.log('キャンセルがクリックされました');
