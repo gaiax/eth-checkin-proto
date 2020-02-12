@@ -70,7 +70,6 @@ class AddPlace extends Component {
                         <Form.Label column sm={4}>イメージ画像</Form.Label>
                         <Col sm={8}>
                             <Form.Control 
-                                id="image"
                                 type="file"  
                                 className="form-control"
                                 onChange={this.captureFile}

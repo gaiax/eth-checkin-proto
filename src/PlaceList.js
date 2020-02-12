@@ -47,7 +47,7 @@ class PlaceList extends Component {
                         }}
                       />
                       <span> </span>
-                      <img id="placeImage" src= {`https://ipfs.io/ipfs/${place.ipfsHash}`} alt=""></img>
+                      <img className="placeImage" id="key" src= {`https://ipfs.io/ipfs/${place.ipfsHash}`} alt=""></img>
                       <span className="content"> {place.name}</span>
                       {/* <span>  {place[0]} </span> */}
                     </ListGroup.Item>

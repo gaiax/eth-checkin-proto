@@ -1,0 +1,55 @@
+[debug] [2020-02-02T10:32:44.299Z] ----------------------------------------------------------------------
+[debug] [2020-02-02T10:32:44.302Z] Command:       /Users/yosuke.aramaki/.nodebrew/node/v11.14.0/bin/node /Users/yosuke.aramaki/.nodebrew/current/bin/firebase init
+[debug] [2020-02-02T10:32:44.302Z] CLI Version:   7.11.0
+[debug] [2020-02-02T10:32:44.302Z] Platform:      darwin
+[debug] [2020-02-02T10:32:44.302Z] Node Version:  v11.14.0
+[debug] [2020-02-02T10:32:44.310Z] Time:          Sun Feb 02 2020 19:32:44 GMT+0900 (GMT+09:00)
+[debug] [2020-02-02T10:32:44.311Z] ----------------------------------------------------------------------
+[debug] [2020-02-02T10:32:44.311Z] 
+[warn] ⚠  JSON error trying to load /Users/yosuke.aramaki/Desktop/Gaiax/oss-gaiax-blockchain/.firebaserc
+[debug] [2020-02-02T10:32:44.341Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2020-02-02T10:32:44.343Z] > authorizing via signed-in user
+[info] 
+     ######## #### ########  ######## ########     ###     ######  ########
+     ##        ##  ##     ## ##       ##     ##  ##   ##  ##       ##
+     ######    ##  ########  ######   ########  #########  ######  ######
+     ##        ##  ##    ##  ##       ##     ## ##     ##       ## ##
+     ##       #### ##     ## ######## ########  ##     ##  ######  ########
+
+You're about to initialize a Firebase project in this directory:
+
+  /Users/yosuke.aramaki/Desktop/Gaiax/oss-gaiax-blockchain
+
+Before we get started, keep in mind:
+
+  * You are initializing in an existing Firebase project directory
+
+[info] 
+=== Project Setup
+[info] 
+[info] First, let's associate this project directory with a Firebase project.
+[info] You can create multiple project aliases by running firebase use --add, 
+[info] but for now we'll just set up a default project.
+[info] 
+[debug] [2020-02-02T10:32:49.971Z] >>> HTTP REQUEST GET https://firebase.googleapis.com/v1beta1/projects/s  
+ 
+[debug] [2020-02-02T10:32:51.071Z] <<< HTTP RESPONSE 403
+[debug] [2020-02-02T10:32:51.071Z] <<< HTTP RESPONSE BODY
+[debug] [2020-02-02T10:32:51.074Z] HTTP Error: 403, The caller does not have permission
+[debug] [2020-02-02T10:32:51.442Z] FirebaseError: HTTP Error: 403, The caller does not have permission
+    at module.exports (/Users/yosuke.aramaki/.nodebrew/node/v11.14.0/lib/node_modules/firebase-tools/lib/responseToError.js:38:12)
+    at Request._callback (/Users/yosuke.aramaki/.nodebrew/node/v11.14.0/lib/node_modules/firebase-tools/lib/api.js:39:35)
+    at Request.self.callback (/Users/yosuke.aramaki/.nodebrew/node/v11.14.0/lib/node_modules/firebase-tools/node_modules/request/request.js:185:22)
+    at Request.emit (events.js:193:13)
+    at Request.EventEmitter.emit (domain.js:481:20)
+    at Request.<anonymous> (/Users/yosuke.aramaki/.nodebrew/node/v11.14.0/lib/node_modules/firebase-tools/node_modules/request/request.js:1161:10)
+    at Request.emit (events.js:193:13)
+    at Request.EventEmitter.emit (domain.js:481:20)
+    at IncomingMessage.<anonymous> (/Users/yosuke.aramaki/.nodebrew/node/v11.14.0/lib/node_modules/firebase-tools/node_modules/request/request.js:1083:12)
+    at Object.onceWrapper (events.js:281:20)
+    at IncomingMessage.emit (events.js:198:15)
+    at IncomingMessage.EventEmitter.emit (domain.js:481:20)
+    at endReadableNT (_stream_readable.js:1139:12)
+    at processTicksAndRejections (internal/process/task_queues.js:81:17)
+[error] 
+[error] Error: Failed to get Firebase project s. Please make sure the project exists and your account has permission to access it.
