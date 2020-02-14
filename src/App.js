@@ -46,14 +46,14 @@ class App extends Component {
         console.log(e)
       } 
     } catch (error) {
-      // var result = window.confirm('Metamaskをダウンドードし、ネットワークをRoptenに設定してください。ダウンロードの方法のページを開きますか？');
+      var result = window.confirm('Metamaskをダウンドードし、ネットワークをRoptenに設定してください。ダウンロードの方法のページを開きますか？');
     
-      // if( result ) {
-      //   await window.open('https://oss.gaiax-blockchain.com/metamask.html');
-      // }
-      // else {
-      //   console.log('キャンセルがクリックされました');
-      // }
+      if( result ) {
+        await window.open('https://oss.gaiax-blockchain.com/metamask.html');
+      }
+      else {
+        console.log('キャンセルがクリックされました');
+      }
       console.error(error);
     }
     await this.loadPlaceInfo();

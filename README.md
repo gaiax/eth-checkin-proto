@@ -2,8 +2,7 @@
 Checkin application using Ethereum
 
 ## Web demosite
-https://oss.gaiax-blockchain.com/check-in/
-
+https://eth-checkin.firebaseapp.com
 
 ## Contributing
 Pull requests and stars are always welcome.
